@@ -840,10 +840,10 @@
                                 <div className="logo">FitLife</div>
                                 <ul className="nav">
                                     <li><a onClick={() => scrollTo('awareness')}>Health Tips</a></li>
-                                    <li><a onClick={() => scrollTo('videos')}>Videos</a></li>
+                                    <li><a onClick={() => scrollTo('videos')}>Workouts</a></li>
                                     <li><a onClick={() => scrollTo('exercises')}>Exercises</a></li>
                                     <li><a onClick={() => scrollTo('games')}>Games</a></li>
-                                    <li><a onClick={() => scrollTo('challenge')}>5-Day Challenge</a></li>
+                                    <li><a onClick={() => scrollTo('challenge')}>Challenge</a></li>
                                     <li><a onClick={() => scrollTo('tools')}>Tools</a></li>
                                 </ul>
                             </div>
@@ -869,7 +869,7 @@
 
                     <footer className="footer">
                         <div className="container">
-                            <p> Made by AAYUSH, ADITYA, DEV, SOURAV & ROHAN</p>
+                            <p> MADE BY AAYUSH, DEV, ADITYA, SOURAV & ROHAN </p>
                             <p>© 2026 FitLife - Your Health Awareness Platform</p>
                         </div>
                     </footer>
@@ -882,92 +882,33 @@
         }
 
         function VideosSection() {
-            const [selectedCategory, setSelectedCategory] = useState('all');
-
-            const videos = [
-                { id: 'qX9FSZJu448', title: 'Full Body Workout at Home', category: 'strength', duration: '15 min' },
-                { id: '3sEeVJEXTfY', title: '20 Min HIIT Cardio Workout', category: 'cardio', duration: '20 min' },
-                { id: 'COp7BR_Dvps', title: 'Yoga for Beginners', category: 'yoga', duration: '25 min' },
-                { id: 'g_tea8ZNk5A', title: 'Morning Stretching Routine', category: 'stretching', duration: '10 min' },
-                { id: 'ml6cT4AZdqI', title: 'Abs Workout - 10 Minutes', category: 'strength', duration: '10 min' },
-                { id: 'UBMk30rjy0o', title: 'Cardio Dance Workout', category: 'cardio', duration: '30 min' },
-                { id: 'v7AYKMP6rOE', title: 'Yoga for Flexibility', category: 'yoga', duration: '20 min' },
-                { id: 'sTANio_2E0Q', title: 'Full Body Stretching', category: 'stretching', duration: '15 min' },
+            const videoTips = [
+                { title: '🏃 Cardio Exercises', desc: 'Running, jumping jacks, burpees, high knees - get your heart pumping!', duration: '15-30 min' },
+                { title: '💪 Strength Training', desc: 'Push-ups, squats, lunges, planks - build muscle and strength!', duration: '20-30 min' },
+                { title: '🧘 Yoga & Flexibility', desc: 'Downward dog, cobra pose, child\'s pose - improve flexibility!', duration: '15-25 min' },
+                { title: '🤸 Full Body Workout', desc: 'Combine cardio and strength for complete fitness routine!', duration: '30-45 min' }
             ];
-
-            const categories = [
-                { id: 'all', name: 'All Videos', icon: '🎥' },
-                { id: 'strength', name: 'Strength', icon: '💪' },
-                { id: 'cardio', name: 'Cardio', icon: '🏃' },
-                { id: 'yoga', name: 'Yoga', icon: '🧘' },
-                { id: 'stretching', name: 'Stretching', icon: '🤸' }
-            ];
-
-            const filteredVideos = selectedCategory === 'all' 
-                ? videos 
-                : videos.filter(v => v.category === selectedCategory);
 
             return (
                 <section id="videos" className="section" style={{background: 'white'}}>
                     <div className="container">
                         <div className="section-header">
-                            <h2 className="section-title">Fitness Video Tutorials</h2>
-                            <p className="section-subtitle">Follow along with expert-guided workout videos</p>
-                        </div>
-
-                        <div style={{
-                            display: 'flex',
-                            gap: '1rem',
-                            justifyContent: 'center',
-                            marginBottom: '3rem',
-                            flexWrap: 'wrap'
-                        }}>
-                            {categories.map(cat => (
-                                <button
-                                    key={cat.id}
-                                    onClick={() => setSelectedCategory(cat.id)}
-                                    style={{
-                                        padding: '0.75rem 1.5rem',
-                                        background: selectedCategory === cat.id ? 'linear-gradient(135deg, #6366f1, #ec4899)' : 'var(--bg)',
-                                        color: selectedCategory === cat.id ? 'white' : 'var(--text)',
-                                        border: selectedCategory === cat.id ? 'none' : '2px solid var(--border)',
-                                        borderRadius: '25px',
-                                        cursor: 'pointer',
-                                        fontWeight: '600',
-                                        fontFamily: 'Plus Jakarta Sans, sans-serif',
-                                        transition: 'all 0.3s',
-                                        fontSize: '0.95rem'
-                                    }}
-                                    onMouseOver={(e) => {
-                                        if (selectedCategory !== cat.id) {
-                                            e.currentTarget.style.borderColor = '#6366f1';
-                                            e.currentTarget.style.transform = 'translateY(-2px)';
-                                        }
-                                    }}
-                                    onMouseOut={(e) => {
-                                        if (selectedCategory !== cat.id) {
-                                            e.currentTarget.style.borderColor = 'var(--border)';
-                                            e.currentTarget.style.transform = 'translateY(0)';
-                                        }
-                                    }}
-                                >
-                                    {cat.icon} {cat.name}
-                                </button>
-                            ))}
+                            <h2 className="section-title">Workout Guides</h2>
+                            <p className="section-subtitle">Follow these exercise routines for a healthier you</p>
                         </div>
 
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
                             gap: '2rem'
                         }}>
-                            {filteredVideos.map((video, idx) => (
+                            {videoTips.map((tip, idx) => (
                                 <div key={idx} style={{
                                     background: 'var(--card-bg)',
+                                    padding: '2rem',
                                     borderRadius: '16px',
-                                    overflow: 'hidden',
                                     border: '1px solid var(--border)',
-                                    transition: 'transform 0.3s, box-shadow 0.3s'
+                                    transition: 'all 0.3s'
                                 }}
                                 onMouseOver={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-5px)';
@@ -977,30 +918,31 @@
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.boxShadow = 'none';
                                 }}>
-                                    <div style={{position: 'relative', paddingBottom: '56.25%', height: 0}}>
-                                        <iframe
-                                            style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
-                                            src={`https://www.youtube.com/embed/${video.id}`}
-                                            frameBorder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen
-                                        ></iframe>
-                                    </div>
-                                    <div style={{padding: '1.25rem'}}>
-                                        <h4 style={{color: 'var(--text)', fontSize: '1.1rem', marginBottom: '0.5rem', fontWeight: '600'}}>
-                                            {video.title}
-                                        </h4>
-                                        <div style={{
-                                            display: 'inline-block',
-                                            padding: '0.35rem 0.75rem',
-                                            background: 'rgba(99, 102, 241, 0.1)',
-                                            color: '#6366f1',
-                                            borderRadius: '12px',
-                                            fontSize: '0.85rem',
-                                            fontWeight: '600'
-                                        }}>
-                                            ⏱️ {video.duration}
-                                        </div>
+                                    <h3 style={{
+                                        color: 'var(--text)',
+                                        fontSize: '1.4rem',
+                                        marginBottom: '1rem',
+                                        fontWeight: '700'
+                                    }}>
+                                        {tip.title}
+                                    </h3>
+                                    <p style={{
+                                        color: 'var(--text-dim)',
+                                        marginBottom: '1rem',
+                                        lineHeight: '1.7'
+                                    }}>
+                                        {tip.desc}
+                                    </p>
+                                    <div style={{
+                                        display: 'inline-block',
+                                        padding: '0.5rem 1rem',
+                                        background: 'rgba(99, 102, 241, 0.1)',
+                                        color: '#6366f1',
+                                        borderRadius: '12px',
+                                        fontSize: '0.9rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        ⏱️ {tip.duration}
                                     </div>
                                 </div>
                             ))}
@@ -1012,49 +954,666 @@
 
         function ExercisesSection() {
             const [selectedBodyPart, setSelectedBodyPart] = useState('chest');
+            const [selectedExercise, setSelectedExercise] = useState(null);
 
             const exercises = {
                 chest: [
-                    { name: 'Push-ups', sets: '3-4', reps: '10-15', desc: 'Classic bodyweight exercise for chest, shoulders, and triceps' },
-                    { name: 'Dumbbell Bench Press', sets: '3-4', reps: '8-12', desc: 'Great for building chest mass and strength' },
-                    { name: 'Dumbbell Flyes', sets: '3', reps: '10-12', desc: 'Isolates chest muscles for better definition' },
-                    { name: 'Incline Push-ups', sets: '3', reps: '12-15', desc: 'Targets upper chest, easier variation' }
+                    { 
+                        name: 'Push-ups', 
+                        sets: '3-4', 
+                        reps: '10-15', 
+                        desc: 'Classic bodyweight exercise for chest, shoulders, and triceps',
+                        illustration: '🧍➡️🧎‍♂️',
+                        instructions: [
+                            'Start in plank position, hands shoulder-width apart',
+                            'Lower your body until chest nearly touches floor',
+                            'Keep core tight and back straight',
+                            'Push back up to starting position'
+                        ],
+                        tips: 'Keep elbows at 45° angle, not flared out'
+                    },
+                    { 
+                        name: 'Dumbbell Bench Press', 
+                        sets: '3-4', 
+                        reps: '8-12', 
+                        desc: 'Great for building chest mass and strength',
+                        illustration: '🛏️🏋️',
+                        instructions: [
+                            'Lie on bench with dumbbells at chest level',
+                            'Press weights up until arms are extended',
+                            'Lower slowly back to chest level',
+                            'Keep feet flat on floor for stability'
+                        ],
+                        tips: 'Control the weight, don\'t bounce it off your chest'
+                    },
+                    { 
+                        name: 'Dumbbell Flyes', 
+                        sets: '3', 
+                        reps: '10-12', 
+                        desc: 'Isolates chest muscles for better definition',
+                        illustration: '🤲➡️🙏',
+                        instructions: [
+                            'Lie on bench with dumbbells above chest',
+                            'Lower weights out to sides in arc motion',
+                            'Feel stretch in chest, keep slight elbow bend',
+                            'Bring weights back together above chest'
+                        ],
+                        tips: 'Don\'t go too heavy, focus on the stretch'
+                    },
+                    { 
+                        name: 'Incline Push-ups', 
+                        sets: '3', 
+                        reps: '12-15', 
+                        desc: 'Targets upper chest, easier variation',
+                        illustration: '📐🧍‍♂️',
+                        instructions: [
+                            'Place hands on elevated surface (bench/table)',
+                            'Body should form straight line',
+                            'Lower chest toward surface',
+                            'Push back to starting position'
+                        ],
+                        tips: 'Higher surface = easier, lower = harder'
+                    },
+                    { 
+                        name: 'Decline Push-ups', 
+                        sets: '3', 
+                        reps: '8-12', 
+                        desc: 'Advanced variation, targets lower chest',
+                        illustration: '🦵📦🧍',
+                        instructions: [
+                            'Place feet on elevated surface',
+                            'Hands on ground shoulder-width apart',
+                            'Lower chest to floor maintaining straight body',
+                            'Push back up powerfully'
+                        ],
+                        tips: 'More challenging than regular push-ups'
+                    },
+                    { 
+                        name: 'Chest Dips', 
+                        sets: '3', 
+                        reps: '8-12', 
+                        desc: 'Excellent for lower chest development',
+                        illustration: '🔲🧍🔲',
+                        instructions: [
+                            'Use parallel bars or sturdy chairs',
+                            'Lean forward slightly for chest emphasis',
+                            'Lower until shoulders are below elbows',
+                            'Press back up to starting position'
+                        ],
+                        tips: 'Lean forward more to target chest over triceps'
+                    },
+                    { 
+                        name: 'Diamond Push-ups', 
+                        sets: '3', 
+                        reps: '8-12', 
+                        desc: 'Works inner chest and triceps',
+                        illustration: '💎🧍‍♂️',
+                        instructions: [
+                            'Form diamond shape with hands under chest',
+                            'Thumbs and index fingers touching',
+                            'Lower body keeping elbows close',
+                            'Push back up maintaining form'
+                        ],
+                        tips: 'Great for inner chest definition'
+                    }
                 ],
                 back: [
-                    { name: 'Pull-ups', sets: '3-4', reps: '6-10', desc: 'King of back exercises, builds width and strength' },
-                    { name: 'Dumbbell Rows', sets: '3-4', reps: '10-12', desc: 'Excellent for back thickness and strength' },
-                    { name: 'Superman Exercise', sets: '3', reps: '15-20', desc: 'Strengthens lower back without equipment' },
-                    { name: 'Lat Pulldown', sets: '3', reps: '10-12', desc: 'Machine exercise for lat development' }
+                    { 
+                        name: 'Pull-ups', 
+                        sets: '3-4', 
+                        reps: '6-10', 
+                        desc: 'King of back exercises, builds width and strength',
+                        illustration: '🎯🧗‍♂️',
+                        instructions: [
+                            'Hang from bar with overhand grip',
+                            'Pull yourself up until chin over bar',
+                            'Lower with control to full extension',
+                            'Avoid swinging or kipping'
+                        ],
+                        tips: 'Engage back muscles, not just arms'
+                    },
+                    { 
+                        name: 'Dumbbell Rows', 
+                        sets: '3-4', 
+                        reps: '10-12', 
+                        desc: 'Excellent for back thickness and strength',
+                        illustration: '🪑🏋️‍♂️',
+                        instructions: [
+                            'Place one knee and hand on bench',
+                            'Row dumbbell to hip keeping elbow close',
+                            'Squeeze shoulder blade at top',
+                            'Lower weight with control'
+                        ],
+                        tips: 'Think of pulling with elbow, not hand'
+                    },
+                    { 
+                        name: 'Superman Exercise', 
+                        sets: '3', 
+                        reps: '15-20', 
+                        desc: 'Strengthens lower back without equipment',
+                        illustration: '🦸‍♂️⬆️',
+                        instructions: [
+                            'Lie face down on floor',
+                            'Extend arms forward like Superman',
+                            'Lift arms, chest and legs off ground',
+                            'Hold for 2-3 seconds, lower'
+                        ],
+                        tips: 'Great for lower back and posture'
+                    },
+                    { 
+                        name: 'Inverted Rows', 
+                        sets: '3-4', 
+                        reps: '10-15', 
+                        desc: 'Bodyweight row using table or bar',
+                        illustration: '📊🧍',
+                        instructions: [
+                            'Lie under sturdy table or low bar',
+                            'Grab edge with overhand grip',
+                            'Pull chest to table/bar',
+                            'Lower back down with control'
+                        ],
+                        tips: 'Great alternative to pull-ups for beginners'
+                    },
+                    { 
+                        name: 'Face Pulls', 
+                        sets: '3', 
+                        reps: '12-15', 
+                        desc: 'Targets rear delts and upper back',
+                        illustration: '➡️😐⬅️',
+                        instructions: [
+                            'Use resistance band at face height',
+                            'Pull handles toward your face',
+                            'Separate hands as you pull back',
+                            'Squeeze shoulder blades together'
+                        ],
+                        tips: 'Excellent for posture and shoulder health'
+                    },
+                    { 
+                        name: 'Lat Pulldown', 
+                        sets: '3', 
+                        reps: '10-12', 
+                        desc: 'Machine exercise for lat development',
+                        illustration: '⬇️💪⬇️',
+                        instructions: [
+                            'Sit at lat pulldown machine',
+                            'Grip bar wider than shoulders',
+                            'Pull bar to upper chest',
+                            'Control the weight back up'
+                        ],
+                        tips: 'Don\'t lean back too much, stay upright'
+                    },
+                    { 
+                        name: 'Reverse Snow Angels', 
+                        sets: '3', 
+                        reps: '12-15', 
+                        desc: 'Bodyweight exercise for entire back',
+                        illustration: '😇⬆️',
+                        instructions: [
+                            'Lie face down, arms by sides',
+                            'Lift chest and arms slightly',
+                            'Move arms overhead in arc (like snow angel)',
+                            'Return to starting position'
+                        ],
+                        tips: 'Light exercise but very effective for back'
+                    }
                 ],
                 biceps: [
-                    { name: 'Dumbbell Curls', sets: '3-4', reps: '10-12', desc: 'Classic bicep builder, focus on form' },
-                    { name: 'Hammer Curls', sets: '3', reps: '10-12', desc: 'Targets brachialis for thicker arms' },
-                    { name: 'Concentration Curls', sets: '3', reps: '10-12', desc: 'Great for bicep peak development' },
-                    { name: 'Chin-ups', sets: '3', reps: '6-10', desc: 'Bodyweight exercise for biceps and back' }
+                    { 
+                        name: 'Dumbbell Curls', 
+                        sets: '3-4', 
+                        reps: '10-12', 
+                        desc: 'Classic bicep builder, focus on form',
+                        illustration: '🏋️💪',
+                        instructions: [
+                            'Stand with dumbbells at sides, palms forward',
+                            'Curl weights up to shoulders',
+                            'Keep elbows stationary at sides',
+                            'Lower slowly back down'
+                        ],
+                        tips: 'No swinging, control the weight throughout'
+                    },
+                    { 
+                        name: 'Hammer Curls', 
+                        sets: '3', 
+                        reps: '10-12', 
+                        desc: 'Targets brachialis for thicker arms',
+                        illustration: '🔨💪',
+                        instructions: [
+                            'Hold dumbbells with palms facing each other',
+                            'Curl up like holding a hammer',
+                            'Keep wrists neutral throughout',
+                            'Lower with control'
+                        ],
+                        tips: 'Builds thickness between bicep and tricep'
+                    },
+                    { 
+                        name: 'Concentration Curls', 
+                        sets: '3', 
+                        reps: '10-12', 
+                        desc: 'Great for bicep peak development',
+                        illustration: '🪑🤔💪',
+                        instructions: [
+                            'Sit on bench, elbow braced on inner thigh',
+                            'Curl dumbbell up slowly',
+                            'Squeeze at top for 1 second',
+                            'Lower slowly to full extension'
+                        ],
+                        tips: 'Really focus on the contraction'
+                    },
+                    { 
+                        name: 'Chin-ups', 
+                        sets: '3', 
+                        reps: '6-10', 
+                        desc: 'Bodyweight exercise for biceps and back',
+                        illustration: '🎯🧗',
+                        instructions: [
+                            'Hang from bar with underhand grip',
+                            'Pull yourself up using biceps',
+                            'Get chin over bar',
+                            'Lower to full extension'
+                        ],
+                        tips: 'Underhand grip emphasizes biceps more than pull-ups'
+                    },
+                    { 
+                        name: 'Cable Curls', 
+                        sets: '3', 
+                        reps: '12-15', 
+                        desc: 'Constant tension for bicep growth',
+                        illustration: '🔌💪',
+                        instructions: [
+                            'Stand facing cable machine',
+                            'Grip handle with underhand grip',
+                            'Curl up keeping elbows stationary',
+                            'Squeeze at top, return slowly'
+                        ],
+                        tips: 'Cable maintains tension throughout movement'
+                    },
+                    { 
+                        name: 'Preacher Curls', 
+                        sets: '3', 
+                        reps: '10-12', 
+                        desc: 'Isolates biceps, prevents cheating',
+                        illustration: '📐💪',
+                        instructions: [
+                            'Rest arms on preacher bench pad',
+                            'Curl weight up to shoulders',
+                            'Keep upper arms on pad throughout',
+                            'Lower to near full extension'
+                        ],
+                        tips: 'Can\'t cheat with momentum on this one'
+                    }
                 ],
                 triceps: [
-                    { name: 'Diamond Push-ups', sets: '3-4', reps: '10-15', desc: 'Bodyweight tricep exercise, very effective' },
-                    { name: 'Tricep Dips', sets: '3-4', reps: '10-15', desc: 'Use parallel bars or bench' },
-                    { name: 'Overhead Extension', sets: '3', reps: '10-12', desc: 'Stretches and works long head of triceps' },
-                    { name: 'Kickbacks', sets: '3', reps: '12-15', desc: 'Isolation exercise for tricep definition' }
+                    { 
+                        name: 'Diamond Push-ups', 
+                        sets: '3-4', 
+                        reps: '10-15', 
+                        desc: 'Bodyweight tricep exercise, very effective',
+                        illustration: '💎⬇️',
+                        instructions: [
+                            'Form diamond with hands under chest',
+                            'Lower body keeping elbows close to sides',
+                            'Push back up to starting position',
+                            'Keep core tight throughout'
+                        ],
+                        tips: 'Hands closer together = more tricep activation'
+                    },
+                    { 
+                        name: 'Tricep Dips', 
+                        sets: '3-4', 
+                        reps: '10-15', 
+                        desc: 'Use parallel bars or bench',
+                        illustration: '🔲🔲',
+                        instructions: [
+                            'Grip parallel bars or bench edge',
+                            'Lower body until upper arms parallel to ground',
+                            'Keep body upright for tricep focus',
+                            'Push back up to starting position'
+                        ],
+                        tips: 'Leaning back works triceps more than chest'
+                    },
+                    { 
+                        name: 'Overhead Extension', 
+                        sets: '3', 
+                        reps: '10-12', 
+                        desc: 'Stretches and works long head of triceps',
+                        illustration: '⬆️🏋️⬇️',
+                        instructions: [
+                            'Hold dumbbell overhead with both hands',
+                            'Lower weight behind head by bending elbows',
+                            'Keep elbows pointing forward',
+                            'Extend back to starting position'
+                        ],
+                        tips: 'Keep elbows in, don\'t let them flare out'
+                    },
+                    { 
+                        name: 'Kickbacks', 
+                        sets: '3', 
+                        reps: '12-15', 
+                        desc: 'Isolation exercise for tricep definition',
+                        illustration: '⬅️🏋️',
+                        instructions: [
+                            'Bend forward, support on bench',
+                            'Keep upper arm parallel to ground',
+                            'Extend forearm backward',
+                            'Squeeze tricep at full extension'
+                        ],
+                        tips: 'Light weight, focus on squeeze at top'
+                    },
+                    { 
+                        name: 'Close-Grip Bench Press', 
+                        sets: '3-4', 
+                        reps: '8-12', 
+                        desc: 'Compound movement for tricep mass',
+                        illustration: '🛏️🔒',
+                        instructions: [
+                            'Lie on bench, grip bar narrower than shoulder-width',
+                            'Lower to mid-chest keeping elbows tucked',
+                            'Press back up focusing on triceps',
+                            'Don\'t bounce bar off chest'
+                        ],
+                        tips: 'Great for building tricep strength and size'
+                    },
+                    { 
+                        name: 'Skull Crushers', 
+                        sets: '3', 
+                        reps: '10-12', 
+                        desc: 'Lying tricep extension exercise',
+                        illustration: '💀🏋️',
+                        instructions: [
+                            'Lie on bench holding weight above face',
+                            'Lower weight toward forehead by bending elbows',
+                            'Keep upper arms stationary',
+                            'Extend back to starting position'
+                        ],
+                        tips: 'Be careful and use controlled movement'
+                    }
                 ],
                 shoulders: [
-                    { name: 'Shoulder Press', sets: '3-4', reps: '8-12', desc: 'Compound exercise for all deltoid heads' },
-                    { name: 'Lateral Raises', sets: '3-4', reps: '12-15', desc: 'Builds shoulder width, focus on side delts' },
-                    { name: 'Front Raises', sets: '3', reps: '12-15', desc: 'Targets front deltoids' },
-                    { name: 'Pike Push-ups', sets: '3', reps: '10-12', desc: 'Bodyweight shoulder exercise' }
+                    { 
+                        name: 'Shoulder Press', 
+                        sets: '3-4', 
+                        reps: '8-12', 
+                        desc: 'Compound exercise for all deltoid heads',
+                        illustration: '⬆️🏋️⬆️',
+                        instructions: [
+                            'Hold dumbbells at shoulder level',
+                            'Press weights overhead until arms extended',
+                            'Lower back to shoulders with control',
+                            'Can be done seated or standing'
+                        ],
+                        tips: 'Don\'t arch back excessively, keep core tight'
+                    },
+                    { 
+                        name: 'Lateral Raises', 
+                        sets: '3-4', 
+                        reps: '12-15', 
+                        desc: 'Builds shoulder width, focus on side delts',
+                        illustration: '🤲⬆️',
+                        instructions: [
+                            'Stand with dumbbells at sides',
+                            'Raise arms out to sides to shoulder height',
+                            'Keep slight bend in elbows',
+                            'Lower slowly back to sides'
+                        ],
+                        tips: 'Lead with elbows, not hands, pour water at top'
+                    },
+                    { 
+                        name: 'Front Raises', 
+                        sets: '3', 
+                        reps: '12-15', 
+                        desc: 'Targets front deltoids',
+                        illustration: '⬆️🏋️',
+                        instructions: [
+                            'Hold weight in front of thighs',
+                            'Raise arms forward to shoulder height',
+                            'Keep arms nearly straight',
+                            'Lower with control'
+                        ],
+                        tips: 'Can use dumbbells, barbell, or plate'
+                    },
+                    { 
+                        name: 'Pike Push-ups', 
+                        sets: '3', 
+                        reps: '10-12', 
+                        desc: 'Bodyweight shoulder exercise',
+                        illustration: '📐🧍',
+                        instructions: [
+                            'Start in downward dog position (pike)',
+                            'Bend elbows to lower head toward ground',
+                            'Keep hips high throughout',
+                            'Push back up to starting position'
+                        ],
+                        tips: 'Progression toward handstand push-ups'
+                    },
+                    { 
+                        name: 'Arnold Press', 
+                        sets: '3', 
+                        reps: '10-12', 
+                        desc: 'Hits all three deltoid heads',
+                        illustration: '🔄🏋️⬆️',
+                        instructions: [
+                            'Start with palms facing you at shoulder level',
+                            'Press up while rotating palms forward',
+                            'Finish with palms facing forward overhead',
+                            'Reverse motion on the way down'
+                        ],
+                        tips: 'Named after Arnold Schwarzenegger'
+                    },
+                    { 
+                        name: 'Rear Delt Flyes', 
+                        sets: '3', 
+                        reps: '12-15', 
+                        desc: 'Isolates rear deltoids',
+                        illustration: '⬅️💪➡️',
+                        instructions: [
+                            'Bend forward at hips, weights hanging down',
+                            'Raise weights out to sides',
+                            'Lead with elbows, squeeze shoulder blades',
+                            'Lower back to starting position'
+                        ],
+                        tips: 'Essential for balanced shoulder development'
+                    }
                 ],
                 legs: [
-                    { name: 'Squats', sets: '4', reps: '10-15', desc: 'King of leg exercises, works entire lower body' },
-                    { name: 'Lunges', sets: '3', reps: '12-15 each', desc: 'Great for quads, glutes, and balance' },
-                    { name: 'Bulgarian Split Squat', sets: '3', reps: '10-12 each', desc: 'Advanced single-leg exercise' },
-                    { name: 'Calf Raises', sets: '4', reps: '15-20', desc: 'Isolates calf muscles' }
+                    { 
+                        name: 'Squats', 
+                        sets: '4', 
+                        reps: '10-15', 
+                        desc: 'King of leg exercises, works entire lower body',
+                        illustration: '🧍⬇️🧎',
+                        instructions: [
+                            'Stand with feet shoulder-width apart',
+                            'Lower hips back and down like sitting',
+                            'Keep chest up, knees track over toes',
+                            'Push through heels to stand'
+                        ],
+                        tips: 'Go as low as flexibility allows with good form'
+                    },
+                    { 
+                        name: 'Lunges', 
+                        sets: '3', 
+                        reps: '12-15 each', 
+                        desc: 'Great for quads, glutes, and balance',
+                        illustration: '🚶➡️🧎',
+                        instructions: [
+                            'Step forward with one leg',
+                            'Lower hips until both knees at 90°',
+                            'Back knee should nearly touch ground',
+                            'Push back to starting position'
+                        ],
+                        tips: 'Keep torso upright, don\'t let front knee go past toes'
+                    },
+                    { 
+                        name: 'Bulgarian Split Squat', 
+                        sets: '3', 
+                        reps: '10-12 each', 
+                        desc: 'Advanced single-leg exercise',
+                        illustration: '🦵📦',
+                        instructions: [
+                            'Place rear foot on bench behind you',
+                            'Lower hips down into lunge position',
+                            'Keep front shin vertical',
+                            'Push through front heel to stand'
+                        ],
+                        tips: 'Excellent for building leg strength and balance'
+                    },
+                    { 
+                        name: 'Calf Raises', 
+                        sets: '4', 
+                        reps: '15-20', 
+                        desc: 'Isolates calf muscles',
+                        illustration: '🦶⬆️',
+                        instructions: [
+                            'Stand on edge of step or platform',
+                            'Rise up on toes as high as possible',
+                            'Hold for 1 second at top',
+                            'Lower heels below platform level'
+                        ],
+                        tips: 'Full range of motion is key for calf growth'
+                    },
+                    { 
+                        name: 'Romanian Deadlifts', 
+                        sets: '3-4', 
+                        reps: '10-12', 
+                        desc: 'Targets hamstrings and glutes',
+                        illustration: '🏋️⬇️',
+                        instructions: [
+                            'Hold weight in front of thighs',
+                            'Hinge at hips, push butt back',
+                            'Lower weight along legs, feel hamstring stretch',
+                            'Return to standing by thrusting hips forward'
+                        ],
+                        tips: 'Keep back straight, knees slightly bent'
+                    },
+                    { 
+                        name: 'Wall Sit', 
+                        sets: '3', 
+                        reps: '30-60 sec', 
+                        desc: 'Isometric exercise for quad endurance',
+                        illustration: '🧱🪑',
+                        instructions: [
+                            'Lean back against wall',
+                            'Slide down until thighs parallel to ground',
+                            'Keep back flat against wall',
+                            'Hold position for time'
+                        ],
+                        tips: 'Burns like crazy but builds great endurance'
+                    },
+                    { 
+                        name: 'Step-ups', 
+                        sets: '3', 
+                        reps: '12-15 each', 
+                        desc: 'Functional leg exercise',
+                        illustration: '📦⬆️',
+                        instructions: [
+                            'Place foot on bench or box',
+                            'Push through heel to step up',
+                            'Bring other foot up to standing',
+                            'Step back down with control'
+                        ],
+                        tips: 'Use higher box for more difficulty'
+                    }
                 ],
                 abs: [
-                    { name: 'Crunches', sets: '3-4', reps: '15-20', desc: 'Classic ab exercise for upper abs' },
-                    { name: 'Plank', sets: '3', reps: '30-60 sec', desc: 'Isometric core strengthener' },
-                    { name: 'Bicycle Crunches', sets: '3', reps: '15-20', desc: 'Works entire core with rotation' },
-                    { name: 'Leg Raises', sets: '3', reps: '12-15', desc: 'Targets lower abs effectively' }
+                    { 
+                        name: 'Crunches', 
+                        sets: '3-4', 
+                        reps: '15-20', 
+                        desc: 'Classic ab exercise for upper abs',
+                        illustration: '😐⬆️',
+                        instructions: [
+                            'Lie on back, knees bent, feet flat',
+                            'Place hands behind head (don\'t pull neck)',
+                            'Curl shoulders up toward knees',
+                            'Lower back down with control'
+                        ],
+                        tips: 'Quality over quantity, squeeze at the top'
+                    },
+                    { 
+                        name: 'Plank', 
+                        sets: '3', 
+                        reps: '30-60 sec', 
+                        desc: 'Isometric core strengthener',
+                        illustration: '📏😐',
+                        instructions: [
+                            'Start in push-up position on forearms',
+                            'Keep body in straight line from head to heels',
+                            'Engage core, don\'t let hips sag',
+                            'Hold position for time'
+                        ],
+                        tips: 'Best overall core exercise, builds endurance'
+                    },
+                    { 
+                        name: 'Bicycle Crunches', 
+                        sets: '3', 
+                        reps: '15-20', 
+                        desc: 'Works entire core with rotation',
+                        illustration: '🚴⚡',
+                        instructions: [
+                            'Lie on back, hands behind head',
+                            'Bring opposite elbow to opposite knee',
+                            'Extend other leg straight',
+                            'Alternate sides in cycling motion'
+                        ],
+                        tips: 'Great for obliques and overall core'
+                    },
+                    { 
+                        name: 'Leg Raises', 
+                        sets: '3', 
+                        reps: '12-15', 
+                        desc: 'Targets lower abs effectively',
+                        illustration: '🦵⬆️',
+                        instructions: [
+                            'Lie flat on back, hands under glutes',
+                            'Raise legs up keeping them straight',
+                            'Lift until perpendicular to floor',
+                            'Lower slowly without touching ground'
+                        ],
+                        tips: 'Press lower back into floor, control the descent'
+                    },
+                    { 
+                        name: 'Russian Twists', 
+                        sets: '3', 
+                        reps: '20 total', 
+                        desc: 'Oblique exercise with rotation',
+                        illustration: '🔄💪',
+                        instructions: [
+                            'Sit with knees bent, lean back slightly',
+                            'Hold weight at chest',
+                            'Rotate torso side to side',
+                            'Touch weight to ground on each side'
+                        ],
+                        tips: 'Keep feet elevated for more difficulty'
+                    },
+                    { 
+                        name: 'Mountain Climbers', 
+                        sets: '3', 
+                        reps: '20-30', 
+                        desc: 'Dynamic core and cardio exercise',
+                        illustration: '⛰️🏃',
+                        instructions: [
+                            'Start in push-up position',
+                            'Drive one knee toward chest',
+                            'Quickly switch legs',
+                            'Keep core engaged, move quickly'
+                        ],
+                        tips: 'Great for abs and burns calories too'
+                    },
+                    { 
+                        name: 'Dead Bug', 
+                        sets: '3', 
+                        reps: '10-12 each', 
+                        desc: 'Core stability exercise',
+                        illustration: '🐛⬇️',
+                        instructions: [
+                            'Lie on back, arms extended toward ceiling',
+                            'Legs raised with knees at 90°',
+                            'Lower opposite arm and leg toward ground',
+                            'Return and alternate sides'
+                        ],
+                        tips: 'Keep lower back pressed to floor throughout'
+                    }
                 ]
             };
 
@@ -1073,7 +1632,7 @@
                     <div className="container">
                         <div className="section-header">
                             <h2 className="section-title">Exercise Library</h2>
-                            <p className="section-subtitle">Comprehensive guide for all muscle groups</p>
+                            <p className="section-subtitle">Complete guide with illustrations for all muscle groups</p>
                         </div>
 
                         <div style={{
@@ -1086,7 +1645,10 @@
                             {bodyParts.map(part => (
                                 <button
                                     key={part.id}
-                                    onClick={() => setSelectedBodyPart(part.id)}
+                                    onClick={() => {
+                                        setSelectedBodyPart(part.id);
+                                        setSelectedExercise(null);
+                                    }}
                                     style={{
                                         padding: '0.75rem 1.5rem',
                                         background: selectedBodyPart === part.id ? 'linear-gradient(135deg, #6366f1, #ec4899)' : 'var(--card-bg)',
@@ -1099,89 +1661,172 @@
                                         transition: 'all 0.3s',
                                         fontSize: '0.95rem'
                                     }}
-                                    onMouseOver={(e) => {
-                                        if (selectedBodyPart !== part.id) {
-                                            e.currentTarget.style.borderColor = '#6366f1';
-                                            e.currentTarget.style.transform = 'translateY(-2px)';
-                                        }
-                                    }}
-                                    onMouseOut={(e) => {
-                                        if (selectedBodyPart !== part.id) {
-                                            e.currentTarget.style.borderColor = 'var(--border)';
-                                            e.currentTarget.style.transform = 'translateY(0)';
-                                        }
-                                    }}
                                 >
                                     {part.icon} {part.name}
                                 </button>
                             ))}
                         </div>
 
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                            gap: '1.5rem'
-                        }}>
-                            {exercises[selectedBodyPart].map((exercise, idx) => (
-                                <div key={idx} style={{
-                                    background: 'var(--card-bg)',
-                                    padding: '1.75rem',
-                                    borderRadius: '16px',
-                                    border: '1px solid var(--border)',
-                                    transition: 'all 0.3s'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-5px)';
-                                    e.currentTarget.style.borderColor = '#6366f1';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.borderColor = 'var(--border)';
-                                }}>
-                                    <h4 style={{
-                                        color: 'var(--text)',
-                                        fontSize: '1.25rem',
-                                        marginBottom: '0.75rem',
-                                        fontWeight: '700'
-                                    }}>
-                                        {exercise.name}
-                                    </h4>
-                                    <div style={{
-                                        display: 'flex',
-                                        gap: '1rem',
-                                        marginBottom: '1rem'
-                                    }}>
+                        {selectedExercise ? (
+                            <div style={{maxWidth: '800px', margin: '0 auto'}}>
+                                <button 
+                                    onClick={() => setSelectedExercise(null)}
+                                    className="btn btn-secondary"
+                                    style={{marginBottom: '2rem'}}
+                                >
+                                    ← Back to {bodyParts.find(p => p.id === selectedBodyPart)?.name} Exercises
+                                </button>
+                                <div className="game-card">
+                                    <div style={{textAlign: 'center', marginBottom: '2rem'}}>
+                                        <div style={{fontSize: '5rem', marginBottom: '1rem'}}>
+                                            {selectedExercise.illustration}
+                                        </div>
+                                        <h2 style={{fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--text)'}}>
+                                            {selectedExercise.name}
+                                        </h2>
+                                        <p style={{color: 'var(--text-dim)', fontSize: '1.2rem'}}>
+                                            {selectedExercise.desc}
+                                        </p>
+                                    </div>
+
+                                    <div style={{display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2rem'}}>
                                         <div style={{
-                                            padding: '0.5rem 1rem',
+                                            padding: '0.75rem 1.5rem',
                                             background: 'rgba(99, 102, 241, 0.1)',
-                                            borderRadius: '8px',
-                                            fontSize: '0.9rem',
-                                            fontWeight: '600',
+                                            borderRadius: '12px',
+                                            fontWeight: '700',
                                             color: '#6366f1'
                                         }}>
-                                            Sets: {exercise.sets}
+                                            Sets: {selectedExercise.sets}
                                         </div>
                                         <div style={{
-                                            padding: '0.5rem 1rem',
+                                            padding: '0.75rem 1.5rem',
                                             background: 'rgba(16, 185, 129, 0.1)',
-                                            borderRadius: '8px',
-                                            fontSize: '0.9rem',
-                                            fontWeight: '600',
+                                            borderRadius: '12px',
+                                            fontWeight: '700',
                                             color: '#10b981'
                                         }}>
-                                            Reps: {exercise.reps}
+                                            Reps: {selectedExercise.reps}
                                         </div>
                                     </div>
-                                    <p style={{
-                                        color: 'var(--text-dim)',
-                                        fontSize: '0.95rem',
-                                        lineHeight: '1.6'
+
+                                    <div style={{
+                                        background: 'var(--bg)',
+                                        padding: '2rem',
+                                        borderRadius: '16px',
+                                        marginBottom: '1.5rem'
                                     }}>
-                                        {exercise.desc}
-                                    </p>
+                                        <h3 style={{color: 'var(--text)', marginBottom: '1rem', fontSize: '1.5rem'}}>
+                                            📋 Step-by-Step Instructions:
+                                        </h3>
+                                        <ol style={{paddingLeft: '1.5rem', lineHeight: '2'}}>
+                                            {selectedExercise.instructions.map((step, i) => (
+                                                <li key={i} style={{color: 'var(--text)', marginBottom: '0.75rem'}}>
+                                                    {step}
+                                                </li>
+                                            ))}
+                                        </ol>
+                                    </div>
+
+                                    <div style={{
+                                        background: 'rgba(245, 158, 11, 0.1)',
+                                        border: '2px solid #f59e0b',
+                                        padding: '1.5rem',
+                                        borderRadius: '12px'
+                                    }}>
+                                        <h4 style={{color: '#f59e0b', marginBottom: '0.5rem', fontSize: '1.2rem'}}>
+                                            💡 Pro Tip:
+                                        </h4>
+                                        <p style={{color: 'var(--text)', lineHeight: '1.7'}}>
+                                            {selectedExercise.tips}
+                                        </p>
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ) : (
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                                gap: '1.5rem'
+                            }}>
+                                {exercises[selectedBodyPart].map((exercise, idx) => (
+                                    <div 
+                                        key={idx} 
+                                        onClick={() => setSelectedExercise(exercise)}
+                                        style={{
+                                            background: 'var(--card-bg)',
+                                            padding: '1.75rem',
+                                            borderRadius: '16px',
+                                            border: '1px solid var(--border)',
+                                            transition: 'all 0.3s',
+                                            cursor: 'pointer'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(-5px)';
+                                            e.currentTarget.style.borderColor = '#6366f1';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.borderColor = 'var(--border)';
+                                        }}
+                                    >
+                                        <div style={{textAlign: 'center', fontSize: '3rem', marginBottom: '1rem'}}>
+                                            {exercise.illustration}
+                                        </div>
+                                        <h4 style={{
+                                            color: 'var(--text)',
+                                            fontSize: '1.25rem',
+                                            marginBottom: '0.75rem',
+                                            fontWeight: '700'
+                                        }}>
+                                            {exercise.name}
+                                        </h4>
+                                        <div style={{
+                                            display: 'flex',
+                                            gap: '1rem',
+                                            marginBottom: '1rem'
+                                        }}>
+                                            <div style={{
+                                                padding: '0.5rem 1rem',
+                                                background: 'rgba(99, 102, 241, 0.1)',
+                                                borderRadius: '8px',
+                                                fontSize: '0.9rem',
+                                                fontWeight: '600',
+                                                color: '#6366f1'
+                                            }}>
+                                                Sets: {exercise.sets}
+                                            </div>
+                                            <div style={{
+                                                padding: '0.5rem 1rem',
+                                                background: 'rgba(16, 185, 129, 0.1)',
+                                                borderRadius: '8px',
+                                                fontSize: '0.9rem',
+                                                fontWeight: '600',
+                                                color: '#10b981'
+                                            }}>
+                                                Reps: {exercise.reps}
+                                            </div>
+                                        </div>
+                                        <p style={{
+                                            color: 'var(--text-dim)',
+                                            fontSize: '0.95rem',
+                                            lineHeight: '1.6',
+                                            marginBottom: '1rem'
+                                        }}>
+                                            {exercise.desc}
+                                        </p>
+                                        <div style={{
+                                            color: '#6366f1',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem',
+                                            textAlign: 'center'
+                                        }}>
+                                            Click for detailed instructions →
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </section>
             );
