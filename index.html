@@ -151,33 +151,89 @@
         .footer { background: var(--card-bg); border-top: 1px solid var(--border); padding: 3rem 0; margin-top: 5rem; text-align: center; }
         .footer p { color: var(--text-dim); }
 
+        /* Hamburger button */
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 0.5rem; z-index: 200; }
+        .hamburger span { display: block; width: 26px; height: 3px; background: var(--text); border-radius: 3px; transition: all 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+        /* Sidebar overlay */
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 150; backdrop-filter: blur(4px); }
+        .sidebar-overlay.open { display: block; }
+        /* Sidebar drawer */
+        .sidebar { position: fixed; top: 0; left: -320px; width: 280px; height: 100vh; background: #0f172a; border-right: 1px solid var(--border); z-index: 160; transition: left 0.35s cubic-bezier(0.4,0,0.2,1); padding: 0; display: flex; flex-direction: column; }
+        .sidebar.open { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 1.75rem; border-bottom: 1px solid var(--border); background: rgba(30,41,59,0.8); }
+        .sidebar-logo { font-size: 1.75rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-family: 'Syne', sans-serif; }
+        .sidebar-close { background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; line-height: 1; }
+        .sidebar-nav { list-style: none; padding: 1.5rem 0; flex: 1; overflow-y: auto; }
+        .sidebar-nav li a { display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.75rem; color: var(--text); text-decoration: none; font-weight: 600; font-size: 1.05rem; cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent; }
+        .sidebar-nav li a:hover { background: rgba(99,102,241,0.12); border-left-color: #6366f1; color: #fff; }
+        .sidebar-footer { padding: 1.25rem 1.75rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; text-align: center; }
         @media (max-width: 1024px) { .tools-grid, .games-grid { grid-template-columns: 1fr; } }
-        @media (max-width: 768px) { .hero h1 { font-size: 3rem; } .nav { display: none; } .cards-grid { grid-template-columns: 1fr; } .nutrition-grid { grid-template-columns: 1fr; } .section-title { font-size: 2.25rem; } .stats-grid { grid-template-columns: 1fr; } .videos-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .nav { display: none; }
+            .hamburger { display: flex; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .nutrition-grid { grid-template-columns: 1fr; }
+            .section-title { font-size: 2.25rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .videos-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <div class="bg-gradient"></div>
     <div id="root"></div>
+    <script>
+        if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+        window.addEventListener('load', function() { window.scrollTo(0, 0); });
+    </script>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
         function App() {
+            const [sidebarOpen, setSidebarOpen] = React.useState(false);
+            const navItems = [
+                { label: '💡 Health Tips', id: 'awareness' },
+                { label: '🎬 Videos', id: 'ytvideos' },
+                { label: '🏋️ Workouts', id: 'videos' },
+                { label: '💪 Exercises', id: 'exercises' },
+                { label: '🎮 Games', id: 'games' },
+                { label: '🎯 Challenge', id: 'challenge' },
+                { label: '🛠️ Tools', id: 'tools' },
+            ];
+            const handleNav = (id) => { setSidebarOpen(false); setTimeout(() => scrollTo(id), 50); };
             return (
                 <>
+                    <div className={"sidebar-overlay " + (sidebarOpen ? 'open' : '')} onClick={() => setSidebarOpen(false)} />
+                    <div className={"sidebar " + (sidebarOpen ? 'open' : '')}>
+                        <div className="sidebar-header">
+                            <span className="sidebar-logo">FitLife</span>
+                            <button className="sidebar-close" onClick={() => setSidebarOpen(false)}>✕</button>
+                        </div>
+                        <ul className="sidebar-nav">
+                            {navItems.map(item => (
+                                <li key={item.id}><a onClick={() => handleNav(item.id)}>{item.label}</a></li>
+                            ))}
+                        </ul>
+                        <div className="sidebar-footer">© 2026 FitLife — Health & Wellness</div>
+                    </div>
+
                     <header className="header">
                         <div className="container">
                             <div className="header-content">
                                 <div className="logo">FitLife</div>
                                 <ul className="nav">
-                                    <li><a onClick={() => scrollTo('awareness')}>Health Tips</a></li>
-                                    <li><a onClick={() => scrollTo('ytvideos')}>Videos</a></li>
-                                    <li><a onClick={() => scrollTo('videos')}>Workouts</a></li>
-                                    <li><a onClick={() => scrollTo('exercises')}>Exercises</a></li>
-                                    <li><a onClick={() => scrollTo('games')}>Games</a></li>
-                                    <li><a onClick={() => scrollTo('challenge')}>Challenge</a></li>
-                                    <li><a onClick={() => scrollTo('tools')}>Tools</a></li>
+                                    {navItems.map(item => (
+                                        <li key={item.id}><a onClick={() => scrollTo(item.id)}>{item.label.replace(/^[^ ]+ /, '')}</a></li>
+                                    ))}
                                 </ul>
+                                <button className={"hamburger " + (sidebarOpen ? 'open' : '')} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Menu">
+                                    <span></span><span></span><span></span>
+                                </button>
                             </div>
                         </div>
                     </header>
@@ -714,6 +770,22 @@
             const [gameOver, setGameOver] = useState(false);
             const [streak, setStreak] = useState(0);
             const [bestStreak, setBestStreak] = useState(0);
+            // Pranic classification: 'high' = sattvic/high prana, 'low' = rajasic/tamasic/non-pranic
+            // High-pranic: fresh fruits, vegetables, whole grains, dairy, nuts, legumes, mild spices
+            // Non-pranic / Low: meat, onion, garlic, mushroom, deep-fried, over-processed, stale, alcohol
+            const pranic = {
+                'Paneer Tikka':'High Pranic 🌿','Paneer Pakora':'Low Pranic ⚠️',
+                'Brown Rice':'High Pranic 🌿','Jeera Rice':'High Pranic 🌿',
+                'Tandoori Roti':'High Pranic 🌿','Butter Naan':'Low Pranic ⚠️',
+                'Buttermilk (Chaas)':'High Pranic 🌿','Sweet Lassi':'High Pranic 🌿',
+                'Fresh Fruit Juice':'High Pranic 🌿','Whole Fruit':'High Pranic 🌿',
+                'Steamed Idli':'High Pranic 🌿','Medu Vada':'Low Pranic ⚠️',
+                'Grilled Chicken Tikka':'Non-Pranic 🔴','Butter Chicken':'Non-Pranic 🔴',
+                'Coconut Water':'High Pranic 🌿','Packaged Fruit Drink':'Non-Pranic 🔴',
+                'Roasted Makhana':'High Pranic 🌿','Namkeen/Mixture':'Low Pranic ⚠️',
+                'Khichdi':'High Pranic 🌿','Biryani':'Non-Pranic 🔴',
+            };
+            const pranicColor = { 'High Pranic 🌿':'#10b981', 'Low Pranic ⚠️':'#f59e0b', 'Non-Pranic 🔴':'#ef4444' };
             const foodPairs = [
                 { foods:['Paneer Tikka','Paneer Pakora'], healthier:0, reason:'Paneer tikka is grilled/baked with minimal oil. Paneer pakora is deep-fried in batter, adding excess calories and unhealthy fats.', cals:[185,320], emojis:['🍢','🍤'] },
                 { foods:['Brown Rice','Jeera Rice'], healthier:0, reason:'Brown rice has more fiber, vitamins, and minerals with lower glycemic index. Jeera rice is white rice tempered with ghee/oil.', cals:[216,220], emojis:['🍚','🍛'] },
@@ -780,6 +852,7 @@
                                     onMouseOut={e=>{if(selected===null){e.currentTarget.style.transform='scale(1)';e.currentTarget.style.borderColor='var(--border)';}}}>
                                     <div style={{fontSize:'3rem',marginBottom:'0.5rem'}}>{pair.emojis[index]}</div>
                                     <div style={{fontSize:'1.2rem',fontWeight:'700',color:'var(--text)',marginBottom:'0.5rem'}}>{food}</div>
+                                    {pranic[food]&&<div style={{fontSize:'0.75rem',fontWeight:'700',padding:'0.2rem 0.6rem',borderRadius:'10px',display:'inline-block',marginBottom:'0.4rem',background:pranicColor[pranic[food]]+'22',color:pranicColor[pranic[food]]}}>{pranic[food]}</div>}
                                     {selected!==null&&<div style={{fontSize:'0.9rem',color:'var(--text-dim)',marginTop:'0.5rem'}}>{pair.cals[index]} calories</div>}
                                 </button>
                             );
@@ -1030,186 +1103,186 @@
 
             const nutritionDB = {
                 // ── INDIAN BREADS ──
-                'chapati':{ name:'Chapati (Roti)', serving:'1 medium (40g)', calories:104, protein:'3.1g', carbs:'18g', fat:'2.4g' },
-                'roti':{ name:'Roti (Wheat)', serving:'1 medium (40g)', calories:104, protein:'3.1g', carbs:'18g', fat:'2.4g' },
-                'phulka':{ name:'Phulka', serving:'1 small (30g)', calories:78, protein:'2.3g', carbs:'14g', fat:'1.8g' },
-                'naan':{ name:'Naan', serving:'1 medium (90g)', calories:262, protein:'9g', carbs:'45g', fat:'4.2g' },
-                'garlic naan':{ name:'Garlic Naan', serving:'1 medium (100g)', calories:310, protein:'9g', carbs:'48g', fat:'8g' },
-                'butter naan':{ name:'Butter Naan', serving:'1 medium (100g)', calories:330, protein:'9g', carbs:'48g', fat:'10g' },
-                'paratha':{ name:'Plain Paratha', serving:'1 medium (60g)', calories:210, protein:'4.5g', carbs:'24g', fat:'10g' },
-                'aloo paratha':{ name:'Aloo Paratha', serving:'1 medium (100g)', calories:290, protein:'6g', carbs:'35g', fat:'14g' },
-                'gobi paratha':{ name:'Gobi Paratha', serving:'1 medium (100g)', calories:278, protein:'5.5g', carbs:'34g', fat:'13g' },
-                'paneer paratha':{ name:'Paneer Paratha', serving:'1 medium (110g)', calories:305, protein:'10g', carbs:'32g', fat:'15g' },
-                'mooli paratha':{ name:'Mooli Paratha', serving:'1 medium (100g)', calories:265, protein:'5g', carbs:'33g', fat:'12g' },
-                'methi paratha':{ name:'Methi Paratha', serving:'1 medium (80g)', calories:220, protein:'5.5g', carbs:'28g', fat:'10g' },
-                'puri':{ name:'Puri', serving:'1 medium (25g)', calories:112, protein:'2g', carbs:'13g', fat:'6g' },
-                'bhatura':{ name:'Bhatura', serving:'1 medium (60g)', calories:230, protein:'4.8g', carbs:'28g', fat:'11g' },
-                'lachha paratha':{ name:'Lachha Paratha', serving:'1 medium (80g)', calories:265, protein:'5g', carbs:'30g', fat:'14g' },
-                'missi roti':{ name:'Missi Roti', serving:'1 medium (60g)', calories:165, protein:'6g', carbs:'24g', fat:'5g' },
-                'bajra roti':{ name:'Bajra Roti', serving:'1 medium (50g)', calories:130, protein:'3.5g', carbs:'22g', fat:'3g' },
-                'jowar roti':{ name:'Jowar Roti', serving:'1 medium (50g)', calories:120, protein:'3g', carbs:'22g', fat:'1.5g' },
-                'makki di roti':{ name:'Makki di Roti', serving:'1 medium (60g)', calories:148, protein:'3g', carbs:'27g', fat:'3g' },
-                'kulcha':{ name:'Kulcha', serving:'1 medium (70g)', calories:210, protein:'5.5g', carbs:'35g', fat:'5.5g' },
+                'chapati':{ name:'Chapati (Roti)', serving:'1 medium (40g)', calories:104, protein:'3.1g', carbs:'18g', fat:'2.4g', pranic:'High Pranic' },
+                'roti':{ name:'Roti (Wheat)', serving:'1 medium (40g)', calories:104, protein:'3.1g', carbs:'18g', fat:'2.4g', pranic:'High Pranic' },
+                'phulka':{ name:'Phulka', serving:'1 small (30g)', calories:78, protein:'2.3g', carbs:'14g', fat:'1.8g', pranic:'High Pranic' },
+                'naan':{ name:'Naan', serving:'1 medium (90g)', calories:262, protein:'9g', carbs:'45g', fat:'4.2g', pranic:'Low Pranic' },
+                'garlic naan':{ name:'Garlic Naan', serving:'1 medium (100g)', calories:310, protein:'9g', carbs:'48g', fat:'8g', pranic:'Non-Pranic' },
+                'butter naan':{ name:'Butter Naan', serving:'1 medium (100g)', calories:330, protein:'9g', carbs:'48g', fat:'10g', pranic:'Low Pranic' },
+                'paratha':{ name:'Plain Paratha', serving:'1 medium (60g)', calories:210, protein:'4.5g', carbs:'24g', fat:'10g', pranic:'High Pranic' },
+                'aloo paratha':{ name:'Aloo Paratha', serving:'1 medium (100g)', calories:290, protein:'6g', carbs:'35g', fat:'14g', pranic:'High Pranic' },
+                'gobi paratha':{ name:'Gobi Paratha', serving:'1 medium (100g)', calories:278, protein:'5.5g', carbs:'34g', fat:'13g', pranic:'High Pranic' },
+                'paneer paratha':{ name:'Paneer Paratha', serving:'1 medium (110g)', calories:305, protein:'10g', carbs:'32g', fat:'15g', pranic:'High Pranic' },
+                'mooli paratha':{ name:'Mooli Paratha', serving:'1 medium (100g)', calories:265, protein:'5g', carbs:'33g', fat:'12g', pranic:'High Pranic' },
+                'methi paratha':{ name:'Methi Paratha', serving:'1 medium (80g)', calories:220, protein:'5.5g', carbs:'28g', fat:'10g', pranic:'High Pranic' },
+                'puri':{ name:'Puri', serving:'1 medium (25g)', calories:112, protein:'2g', carbs:'13g', fat:'6g', pranic:'Low Pranic' },
+                'bhatura':{ name:'Bhatura', serving:'1 medium (60g)', calories:230, protein:'4.8g', carbs:'28g', fat:'11g', pranic:'Low Pranic' },
+                'lachha paratha':{ name:'Lachha Paratha', serving:'1 medium (80g)', calories:265, protein:'5g', carbs:'30g', fat:'14g', pranic:'Low Pranic' },
+                'missi roti':{ name:'Missi Roti', serving:'1 medium (60g)', calories:165, protein:'6g', carbs:'24g', fat:'5g', pranic:'High Pranic' },
+                'bajra roti':{ name:'Bajra Roti', serving:'1 medium (50g)', calories:130, protein:'3.5g', carbs:'22g', fat:'3g', pranic:'High Pranic' },
+                'jowar roti':{ name:'Jowar Roti', serving:'1 medium (50g)', calories:120, protein:'3g', carbs:'22g', fat:'1.5g', pranic:'High Pranic' },
+                'makki di roti':{ name:'Makki di Roti', serving:'1 medium (60g)', calories:148, protein:'3g', carbs:'27g', fat:'3g', pranic:'High Pranic' },
+                'kulcha':{ name:'Kulcha', serving:'1 medium (70g)', calories:210, protein:'5.5g', carbs:'35g', fat:'5.5g', pranic:'High Pranic' },
 
                 // ── INDIAN RICE DISHES ──
-                'basmati rice':{ name:'Basmati Rice (cooked)', serving:'1 cup (158g)', calories:191, protein:'4g', carbs:'41g', fat:'0.5g' },
-                'jeera rice':{ name:'Jeera Rice', serving:'1 cup (200g)', calories:220, protein:'4.5g', carbs:'43g', fat:'4g' },
-                'biryani':{ name:'Chicken Biryani', serving:'1 cup (250g)', calories:375, protein:'18g', carbs:'48g', fat:'12g' },
-                'veg biryani':{ name:'Vegetable Biryani', serving:'1 cup (250g)', calories:290, protein:'7g', carbs:'52g', fat:'6g' },
-                'mutton biryani':{ name:'Mutton Biryani', serving:'1 cup (250g)', calories:425, protein:'22g', carbs:'46g', fat:'16g' },
-                'pulao':{ name:'Vegetable Pulao', serving:'1 cup (200g)', calories:245, protein:'5g', carbs:'42g', fat:'6g' },
-                'fried rice':{ name:'Veg Fried Rice', serving:'1 cup (198g)', calories:290, protein:'6g', carbs:'48g', fat:'8g' },
-                'lemon rice':{ name:'Lemon Rice', serving:'1 cup (200g)', calories:235, protein:'4g', carbs:'44g', fat:'5g' },
-                'curd rice':{ name:'Curd Rice', serving:'1 cup (250g)', calories:268, protein:'7g', carbs:'45g', fat:'6g' },
-                'tamarind rice':{ name:'Tamarind Rice (Puliyodarai)', serving:'1 cup (200g)', calories:285, protein:'4g', carbs:'50g', fat:'7g' },
-                'pongal':{ name:'Ven Pongal', serving:'1 cup (200g)', calories:285, protein:'8g', carbs:'42g', fat:'9g' },
-                'khichdi':{ name:'Khichdi', serving:'1 cup (200g)', calories:195, protein:'8g', carbs:'32g', fat:'4g' },
-                'masala khichdi':{ name:'Masala Khichdi', serving:'1 cup (220g)', calories:225, protein:'9g', carbs:'36g', fat:'6g' },
+                'basmati rice':{ name:'Basmati Rice (cooked)', serving:'1 cup (158g)', calories:191, protein:'4g', carbs:'41g', fat:'0.5g', pranic:'High Pranic' },
+                'jeera rice':{ name:'Jeera Rice', serving:'1 cup (200g)', calories:220, protein:'4.5g', carbs:'43g', fat:'4g', pranic:'High Pranic' },
+                'biryani':{ name:'Chicken Biryani', serving:'1 cup (250g)', calories:375, protein:'18g', carbs:'48g', fat:'12g', pranic:'Non-Pranic' },
+                'veg biryani':{ name:'Vegetable Biryani', serving:'1 cup (250g)', calories:290, protein:'7g', carbs:'52g', fat:'6g', pranic:'High Pranic' },
+                'mutton biryani':{ name:'Mutton Biryani', serving:'1 cup (250g)', calories:425, protein:'22g', carbs:'46g', fat:'16g', pranic:'Non-Pranic' },
+                'pulao':{ name:'Vegetable Pulao', serving:'1 cup (200g)', calories:245, protein:'5g', carbs:'42g', fat:'6g', pranic:'High Pranic' },
+                'fried rice':{ name:'Veg Fried Rice', serving:'1 cup (198g)', calories:290, protein:'6g', carbs:'48g', fat:'8g', pranic:'Non-Pranic' },
+                'lemon rice':{ name:'Lemon Rice', serving:'1 cup (200g)', calories:235, protein:'4g', carbs:'44g', fat:'5g', pranic:'High Pranic' },
+                'curd rice':{ name:'Curd Rice', serving:'1 cup (250g)', calories:268, protein:'7g', carbs:'45g', fat:'6g', pranic:'High Pranic' },
+                'tamarind rice':{ name:'Tamarind Rice (Puliyodarai)', serving:'1 cup (200g)', calories:285, protein:'4g', carbs:'50g', fat:'7g', pranic:'High Pranic' },
+                'pongal':{ name:'Ven Pongal', serving:'1 cup (200g)', calories:285, protein:'8g', carbs:'42g', fat:'9g', pranic:'High Pranic' },
+                'khichdi':{ name:'Khichdi', serving:'1 cup (200g)', calories:195, protein:'8g', carbs:'32g', fat:'4g', pranic:'High Pranic' },
+                'masala khichdi':{ name:'Masala Khichdi', serving:'1 cup (220g)', calories:225, protein:'9g', carbs:'36g', fat:'6g', pranic:'High Pranic' },
 
                 // ── DALS & LENTILS ──
-                'dal':{ name:'Mixed Dal', serving:'1 cup (200g)', calories:212, protein:'14g', carbs:'32g', fat:'3.5g' },
-                'dal tadka':{ name:'Dal Tadka', serving:'1 cup (200g)', calories:235, protein:'12g', carbs:'30g', fat:'7g' },
-                'dal fry':{ name:'Dal Fry', serving:'1 cup (200g)', calories:228, protein:'13g', carbs:'31g', fat:'6g' },
-                'dal makhani':{ name:'Dal Makhani', serving:'1 cup (240g)', calories:285, protein:'14g', carbs:'28g', fat:'13g' },
-                'chana dal':{ name:'Chana Dal', serving:'1 cup cooked (200g)', calories:269, protein:'15g', carbs:'45g', fat:'4g' },
-                'moong dal':{ name:'Moong Dal', serving:'1 cup cooked (200g)', calories:212, protein:'14g', carbs:'39g', fat:'0.8g' },
-                'toor dal':{ name:'Toor Dal (Arhar)', serving:'1 cup cooked (200g)', calories:221, protein:'11g', carbs:'40g', fat:'1g' },
-                'masoor dal':{ name:'Masoor Dal', serving:'1 cup cooked (198g)', calories:230, protein:'18g', carbs:'40g', fat:'0.8g' },
-                'urad dal':{ name:'Urad Dal', serving:'1 cup cooked (200g)', calories:242, protein:'18g', carbs:'38g', fat:'1.2g' },
-                'rajma':{ name:'Rajma Curry', serving:'1 cup (250g)', calories:285, protein:'16g', carbs:'42g', fat:'6g' },
-                'chole':{ name:'Chole (Chickpea Curry)', serving:'1 cup (240g)', calories:304, protein:'16g', carbs:'45g', fat:'8g' },
-                'chana masala':{ name:'Chana Masala', serving:'1 cup (240g)', calories:310, protein:'16g', carbs:'46g', fat:'8.5g' },
-                'sambhar':{ name:'Sambhar', serving:'1 cup (240g)', calories:145, protein:'7g', carbs:'24g', fat:'3g' },
-                'kadhi':{ name:'Kadhi Pakora', serving:'1 cup (250g)', calories:185, protein:'8g', carbs:'18g', fat:'9g' },
-                'dal baati':{ name:'Dal Baati', serving:'2 baati + dal (300g)', calories:485, protein:'14g', carbs:'62g', fat:'20g' },
-                'panchmel dal':{ name:'Panchmel Dal', serving:'1 cup (200g)', calories:240, protein:'13g', carbs:'38g', fat:'5g' },
+                'dal':{ name:'Mixed Dal', serving:'1 cup (200g)', calories:212, protein:'14g', carbs:'32g', fat:'3.5g', pranic:'High Pranic' },
+                'dal tadka':{ name:'Dal Tadka', serving:'1 cup (200g)', calories:235, protein:'12g', carbs:'30g', fat:'7g', pranic:'High Pranic' },
+                'dal fry':{ name:'Dal Fry', serving:'1 cup (200g)', calories:228, protein:'13g', carbs:'31g', fat:'6g', pranic:'High Pranic' },
+                'dal makhani':{ name:'Dal Makhani', serving:'1 cup (240g)', calories:285, protein:'14g', carbs:'28g', fat:'13g', pranic:'High Pranic' },
+                'chana dal':{ name:'Chana Dal', serving:'1 cup cooked (200g)', calories:269, protein:'15g', carbs:'45g', fat:'4g', pranic:'High Pranic' },
+                'moong dal':{ name:'Moong Dal', serving:'1 cup cooked (200g)', calories:212, protein:'14g', carbs:'39g', fat:'0.8g', pranic:'High Pranic' },
+                'toor dal':{ name:'Toor Dal (Arhar)', serving:'1 cup cooked (200g)', calories:221, protein:'11g', carbs:'40g', fat:'1g', pranic:'High Pranic' },
+                'masoor dal':{ name:'Masoor Dal', serving:'1 cup cooked (198g)', calories:230, protein:'18g', carbs:'40g', fat:'0.8g', pranic:'High Pranic' },
+                'urad dal':{ name:'Urad Dal', serving:'1 cup cooked (200g)', calories:242, protein:'18g', carbs:'38g', fat:'1.2g', pranic:'High Pranic' },
+                'rajma':{ name:'Rajma Curry', serving:'1 cup (250g)', calories:285, protein:'16g', carbs:'42g', fat:'6g', pranic:'High Pranic' },
+                'chole':{ name:'Chole (Chickpea Curry)', serving:'1 cup (240g)', calories:304, protein:'16g', carbs:'45g', fat:'8g', pranic:'High Pranic' },
+                'chana masala':{ name:'Chana Masala', serving:'1 cup (240g)', calories:310, protein:'16g', carbs:'46g', fat:'8.5g', pranic:'High Pranic' },
+                'sambhar':{ name:'Sambhar', serving:'1 cup (240g)', calories:145, protein:'7g', carbs:'24g', fat:'3g', pranic:'High Pranic' },
+                'kadhi':{ name:'Kadhi Pakora', serving:'1 cup (250g)', calories:185, protein:'8g', carbs:'18g', fat:'9g', pranic:'High Pranic' },
+                'dal baati':{ name:'Dal Baati', serving:'2 baati + dal (300g)', calories:485, protein:'14g', carbs:'62g', fat:'20g', pranic:'High Pranic' },
+                'panchmel dal':{ name:'Panchmel Dal', serving:'1 cup (200g)', calories:240, protein:'13g', carbs:'38g', fat:'5g', pranic:'High Pranic' },
 
                 // ── INDIAN CURRIES & GRAVIES ──
-                'paneer butter masala':{ name:'Paneer Butter Masala', serving:'1 cup (240g)', calories:385, protein:'16g', carbs:'18g', fat:'28g' },
-                'palak paneer':{ name:'Palak Paneer', serving:'1 cup (240g)', calories:295, protein:'14g', carbs:'12g', fat:'22g' },
-                'kadai paneer':{ name:'Kadai Paneer', serving:'1 cup (240g)', calories:340, protein:'15g', carbs:'14g', fat:'26g' },
-                'shahi paneer':{ name:'Shahi Paneer', serving:'1 cup (240g)', calories:368, protein:'14g', carbs:'16g', fat:'29g' },
-                'matar paneer':{ name:'Matar Paneer', serving:'1 cup (240g)', calories:315, protein:'13g', carbs:'20g', fat:'21g' },
-                'paneer tikka masala':{ name:'Paneer Tikka Masala', serving:'1 cup (240g)', calories:355, protein:'16g', carbs:'15g', fat:'27g' },
-                'saag paneer':{ name:'Saag Paneer', serving:'1 cup (240g)', calories:280, protein:'14g', carbs:'10g', fat:'21g' },
-                'chicken curry':{ name:'Chicken Curry', serving:'1 cup (240g)', calories:295, protein:'28g', carbs:'12g', fat:'16g' },
-                'butter chicken':{ name:'Butter Chicken', serving:'1 cup (240g)', calories:438, protein:'30g', carbs:'14g', fat:'31g' },
-                'tikka masala':{ name:'Chicken Tikka Masala', serving:'1 cup (240g)', calories:365, protein:'32g', carbs:'10g', fat:'23g' },
-                'chicken tikka':{ name:'Chicken Tikka', serving:'6 pieces (150g)', calories:220, protein:'32g', carbs:'4g', fat:'9g' },
-                'korma':{ name:'Chicken Korma', serving:'1 cup (240g)', calories:385, protein:'28g', carbs:'16g', fat:'25g' },
-                'vindaloo':{ name:'Chicken Vindaloo', serving:'1 cup (240g)', calories:285, protein:'26g', carbs:'12g', fat:'15g' },
-                'fish curry':{ name:'Fish Curry', serving:'1 cup (240g)', calories:245, protein:'24g', carbs:'10g', fat:'13g' },
-                'prawn curry':{ name:'Prawn Curry', serving:'1 cup (240g)', calories:235, protein:'22g', carbs:'10g', fat:'12g' },
-                'egg curry':{ name:'Egg Curry', serving:'2 eggs with gravy (200g)', calories:285, protein:'16g', carbs:'12g', fat:'19g' },
-                'mutton curry':{ name:'Mutton Curry', serving:'1 cup (240g)', calories:380, protein:'30g', carbs:'10g', fat:'24g' },
-                'keema':{ name:'Mutton Keema', serving:'1 cup (200g)', calories:365, protein:'28g', carbs:'8g', fat:'24g' },
-                'aloo gobi':{ name:'Aloo Gobi', serving:'1 cup (200g)', calories:158, protein:'3.5g', carbs:'24g', fat:'6g' },
-                'baingan bharta':{ name:'Baingan Bharta', serving:'1 cup (200g)', calories:142, protein:'3g', carbs:'18g', fat:'7g' },
-                'bhindi masala':{ name:'Bhindi Masala', serving:'1 cup (150g)', calories:125, protein:'3g', carbs:'16g', fat:'6g' },
-                'malai kofta':{ name:'Malai Kofta', serving:'3 koftas with gravy (200g)', calories:425, protein:'12g', carbs:'28g', fat:'30g' },
-                'mixed veg curry':{ name:'Mixed Vegetable Curry', serving:'1 cup (200g)', calories:165, protein:'5g', carbs:'22g', fat:'7g' },
-                'aloo matar':{ name:'Aloo Matar', serving:'1 cup (200g)', calories:195, protein:'6g', carbs:'32g', fat:'6g' },
-                'aloo palak':{ name:'Aloo Palak', serving:'1 cup (200g)', calories:175, protein:'5g', carbs:'28g', fat:'6g' },
-                'navratan korma':{ name:'Navratan Korma', serving:'1 cup (240g)', calories:295, protein:'9g', carbs:'28g', fat:'17g' },
-                'kofta curry':{ name:'Vegetable Kofta Curry', serving:'3 koftas (200g)', calories:320, protein:'8g', carbs:'28g', fat:'20g' },
-                'pav bhaji':{ name:'Pav Bhaji', serving:'2 pav + bhaji (300g)', calories:445, protein:'12g', carbs:'58g', fat:'18g' },
-                'chole bhature':{ name:'Chole Bhature', serving:'2 bhature + chole (350g)', calories:580, protein:'18g', carbs:'72g', fat:'24g' },
-                'dahi chicken':{ name:'Dahi Chicken', serving:'1 cup (240g)', calories:310, protein:'32g', carbs:'8g', fat:'17g' },
-                'kadai chicken':{ name:'Kadai Chicken', serving:'1 cup (240g)', calories:320, protein:'30g', carbs:'10g', fat:'18g' },
+                'paneer butter masala':{ name:'Paneer Butter Masala', serving:'1 cup (240g)', calories:385, protein:'16g', carbs:'18g', fat:'28g', pranic:'High Pranic' },
+                'palak paneer':{ name:'Palak Paneer', serving:'1 cup (240g)', calories:295, protein:'14g', carbs:'12g', fat:'22g', pranic:'High Pranic' },
+                'kadai paneer':{ name:'Kadai Paneer', serving:'1 cup (240g)', calories:340, protein:'15g', carbs:'14g', fat:'26g', pranic:'High Pranic' },
+                'shahi paneer':{ name:'Shahi Paneer', serving:'1 cup (240g)', calories:368, protein:'14g', carbs:'16g', fat:'29g', pranic:'High Pranic' },
+                'matar paneer':{ name:'Matar Paneer', serving:'1 cup (240g)', calories:315, protein:'13g', carbs:'20g', fat:'21g', pranic:'High Pranic' },
+                'paneer tikka masala':{ name:'Paneer Tikka Masala', serving:'1 cup (240g)', calories:355, protein:'16g', carbs:'15g', fat:'27g', pranic:'High Pranic' },
+                'saag paneer':{ name:'Saag Paneer', serving:'1 cup (240g)', calories:280, protein:'14g', carbs:'10g', fat:'21g', pranic:'High Pranic' },
+                'chicken curry':{ name:'Chicken Curry', serving:'1 cup (240g)', calories:295, protein:'28g', carbs:'12g', fat:'16g', pranic:'Non-Pranic' },
+                'butter chicken':{ name:'Butter Chicken', serving:'1 cup (240g)', calories:438, protein:'30g', carbs:'14g', fat:'31g', pranic:'Non-Pranic' },
+                'tikka masala':{ name:'Chicken Tikka Masala', serving:'1 cup (240g)', calories:365, protein:'32g', carbs:'10g', fat:'23g', pranic:'Non-Pranic' },
+                'chicken tikka':{ name:'Chicken Tikka', serving:'6 pieces (150g)', calories:220, protein:'32g', carbs:'4g', fat:'9g', pranic:'Non-Pranic' },
+                'korma':{ name:'Chicken Korma', serving:'1 cup (240g)', calories:385, protein:'28g', carbs:'16g', fat:'25g', pranic:'Non-Pranic' },
+                'vindaloo':{ name:'Chicken Vindaloo', serving:'1 cup (240g)', calories:285, protein:'26g', carbs:'12g', fat:'15g', pranic:'Non-Pranic' },
+                'fish curry':{ name:'Fish Curry', serving:'1 cup (240g)', calories:245, protein:'24g', carbs:'10g', fat:'13g', pranic:'Non-Pranic' },
+                'prawn curry':{ name:'Prawn Curry', serving:'1 cup (240g)', calories:235, protein:'22g', carbs:'10g', fat:'12g', pranic:'Non-Pranic' },
+                'egg curry':{ name:'Egg Curry', serving:'2 eggs with gravy (200g)', calories:285, protein:'16g', carbs:'12g', fat:'19g', pranic:'Non-Pranic' },
+                'mutton curry':{ name:'Mutton Curry', serving:'1 cup (240g)', calories:380, protein:'30g', carbs:'10g', fat:'24g', pranic:'Non-Pranic' },
+                'keema':{ name:'Mutton Keema', serving:'1 cup (200g)', calories:365, protein:'28g', carbs:'8g', fat:'24g', pranic:'Non-Pranic' },
+                'aloo gobi':{ name:'Aloo Gobi', serving:'1 cup (200g)', calories:158, protein:'3.5g', carbs:'24g', fat:'6g', pranic:'High Pranic' },
+                'baingan bharta':{ name:'Baingan Bharta', serving:'1 cup (200g)', calories:142, protein:'3g', carbs:'18g', fat:'7g', pranic:'High Pranic' },
+                'bhindi masala':{ name:'Bhindi Masala', serving:'1 cup (150g)', calories:125, protein:'3g', carbs:'16g', fat:'6g', pranic:'High Pranic' },
+                'malai kofta':{ name:'Malai Kofta', serving:'3 koftas with gravy (200g)', calories:425, protein:'12g', carbs:'28g', fat:'30g', pranic:'High Pranic' },
+                'mixed veg curry':{ name:'Mixed Vegetable Curry', serving:'1 cup (200g)', calories:165, protein:'5g', carbs:'22g', fat:'7g', pranic:'High Pranic' },
+                'aloo matar':{ name:'Aloo Matar', serving:'1 cup (200g)', calories:195, protein:'6g', carbs:'32g', fat:'6g', pranic:'High Pranic' },
+                'aloo palak':{ name:'Aloo Palak', serving:'1 cup (200g)', calories:175, protein:'5g', carbs:'28g', fat:'6g', pranic:'High Pranic' },
+                'navratan korma':{ name:'Navratan Korma', serving:'1 cup (240g)', calories:295, protein:'9g', carbs:'28g', fat:'17g', pranic:'High Pranic' },
+                'kofta curry':{ name:'Vegetable Kofta Curry', serving:'3 koftas (200g)', calories:320, protein:'8g', carbs:'28g', fat:'20g', pranic:'High Pranic' },
+                'pav bhaji':{ name:'Pav Bhaji', serving:'2 pav + bhaji (300g)', calories:445, protein:'12g', carbs:'58g', fat:'18g', pranic:'Low Pranic' },
+                'chole bhature':{ name:'Chole Bhature', serving:'2 bhature + chole (350g)', calories:580, protein:'18g', carbs:'72g', fat:'24g', pranic:'Low Pranic' },
+                'dahi chicken':{ name:'Dahi Chicken', serving:'1 cup (240g)', calories:310, protein:'32g', carbs:'8g', fat:'17g', pranic:'Non-Pranic' },
+                'kadai chicken':{ name:'Kadai Chicken', serving:'1 cup (240g)', calories:320, protein:'30g', carbs:'10g', fat:'18g', pranic:'Non-Pranic' },
 
                 // ── SOUTH INDIAN DISHES ──
-                'dosa':{ name:'Plain Dosa', serving:'1 medium (120g)', calories:168, protein:'4g', carbs:'30g', fat:'3.5g' },
-                'masala dosa':{ name:'Masala Dosa', serving:'1 medium (200g)', calories:285, protein:'6g', carbs:'45g', fat:'8g' },
-                'rava dosa':{ name:'Rava Dosa', serving:'1 medium (100g)', calories:180, protein:'4g', carbs:'28g', fat:'6g' },
-                'set dosa':{ name:'Set Dosa (2 pcs)', serving:'2 pieces (160g)', calories:245, protein:'6g', carbs:'40g', fat:'6g' },
-                'idli':{ name:'Idli', serving:'2 pieces (100g)', calories:156, protein:'4.8g', carbs:'30g', fat:'1.2g' },
-                'mini idli':{ name:'Mini Idli (5 pcs)', serving:'5 pieces (80g)', calories:125, protein:'4g', carbs:'24g', fat:'1g' },
-                'uttapam':{ name:'Uttapam', serving:'1 medium (150g)', calories:207, protein:'5g', carbs:'38g', fat:'4g' },
-                'vada':{ name:'Medu Vada', serving:'1 piece (50g)', calories:145, protein:'4.5g', carbs:'15g', fat:'7g' },
-                'rasam':{ name:'Rasam', serving:'1 cup (200g)', calories:45, protein:'1.5g', carbs:'7g', fat:'1.5g' },
-                'avial':{ name:'Avial', serving:'1 cup (200g)', calories:195, protein:'4g', carbs:'22g', fat:'10g' },
-                'appam':{ name:'Appam', serving:'2 pieces (100g)', calories:162, protein:'3g', carbs:'32g', fat:'2g' },
-                'puttu':{ name:'Puttu', serving:'1 serving (100g)', calories:140, protein:'3g', carbs:'28g', fat:'2g' },
-                'idiyappam':{ name:'Idiyappam', serving:'3 pieces (100g)', calories:142, protein:'2.5g', carbs:'30g', fat:'1g' },
-                'pesarattu':{ name:'Pesarattu (Moong Dosa)', serving:'1 medium (90g)', calories:148, protein:'7g', carbs:'22g', fat:'4g' },
+                'dosa':{ name:'Plain Dosa', serving:'1 medium (120g)', calories:168, protein:'4g', carbs:'30g', fat:'3.5g', pranic:'High Pranic' },
+                'masala dosa':{ name:'Masala Dosa', serving:'1 medium (200g)', calories:285, protein:'6g', carbs:'45g', fat:'8g', pranic:'High Pranic' },
+                'rava dosa':{ name:'Rava Dosa', serving:'1 medium (100g)', calories:180, protein:'4g', carbs:'28g', fat:'6g', pranic:'High Pranic' },
+                'set dosa':{ name:'Set Dosa (2 pcs)', serving:'2 pieces (160g)', calories:245, protein:'6g', carbs:'40g', fat:'6g', pranic:'High Pranic' },
+                'idli':{ name:'Idli', serving:'2 pieces (100g)', calories:156, protein:'4.8g', carbs:'30g', fat:'1.2g', pranic:'High Pranic' },
+                'mini idli':{ name:'Mini Idli (5 pcs)', serving:'5 pieces (80g)', calories:125, protein:'4g', carbs:'24g', fat:'1g', pranic:'High Pranic' },
+                'uttapam':{ name:'Uttapam', serving:'1 medium (150g)', calories:207, protein:'5g', carbs:'38g', fat:'4g', pranic:'High Pranic' },
+                'vada':{ name:'Medu Vada', serving:'1 piece (50g)', calories:145, protein:'4.5g', carbs:'15g', fat:'7g', pranic:'Low Pranic' },
+                'rasam':{ name:'Rasam', serving:'1 cup (200g)', calories:45, protein:'1.5g', carbs:'7g', fat:'1.5g', pranic:'High Pranic' },
+                'avial':{ name:'Avial', serving:'1 cup (200g)', calories:195, protein:'4g', carbs:'22g', fat:'10g', pranic:'High Pranic' },
+                'appam':{ name:'Appam', serving:'2 pieces (100g)', calories:162, protein:'3g', carbs:'32g', fat:'2g', pranic:'High Pranic' },
+                'puttu':{ name:'Puttu', serving:'1 serving (100g)', calories:140, protein:'3g', carbs:'28g', fat:'2g', pranic:'High Pranic' },
+                'idiyappam':{ name:'Idiyappam', serving:'3 pieces (100g)', calories:142, protein:'2.5g', carbs:'30g', fat:'1g', pranic:'High Pranic' },
+                'pesarattu':{ name:'Pesarattu (Moong Dosa)', serving:'1 medium (90g)', calories:148, protein:'7g', carbs:'22g', fat:'4g', pranic:'High Pranic' },
 
                 // ── INDIAN SNACKS & STREET FOOD ──
-                'samosa':{ name:'Samosa', serving:'1 medium (50g)', calories:153, protein:'3g', carbs:'18g', fat:'8g' },
-                'pakora':{ name:'Vegetable Pakora', serving:'5 pieces (75g)', calories:185, protein:'4g', carbs:'22g', fat:'9g' },
-                'onion pakora':{ name:'Onion Pakora', serving:'5 pieces (75g)', calories:190, protein:'4g', carbs:'24g', fat:'9g' },
-                'paneer pakora':{ name:'Paneer Pakora', serving:'4 pieces (80g)', calories:270, protein:'12g', carbs:'18g', fat:'17g' },
-                'kachori':{ name:'Kachori', serving:'1 medium (50g)', calories:178, protein:'4g', carbs:'20g', fat:'9g' },
-                'bhel puri':{ name:'Bhel Puri', serving:'1 cup (100g)', calories:168, protein:'4g', carbs:'30g', fat:'4g' },
-                'pani puri':{ name:'Pani Puri', serving:'6 pieces (100g)', calories:125, protein:'3g', carbs:'25g', fat:'2g' },
-                'sev puri':{ name:'Sev Puri', serving:'5 pieces (100g)', calories:185, protein:'4g', carbs:'28g', fat:'7g' },
-                'dahi puri':{ name:'Dahi Puri', serving:'6 pieces (130g)', calories:215, protein:'6g', carbs:'34g', fat:'6g' },
-                'dhokla':{ name:'Dhokla', serving:'2 pieces (100g)', calories:160, protein:'5g', carbs:'28g', fat:'3g' },
-                'khandvi':{ name:'Khandvi', serving:'3 pieces (60g)', calories:115, protein:'4g', carbs:'16g', fat:'4g' },
-                'fafda':{ name:'Fafda', serving:'4 pieces (50g)', calories:198, protein:'5g', carbs:'20g', fat:'11g' },
-                'poha':{ name:'Poha (Beaten Rice)', serving:'1 cup (150g)', calories:180, protein:'4g', carbs:'35g', fat:'3g' },
-                'upma':{ name:'Upma', serving:'1 cup (200g)', calories:198, protein:'5g', carbs:'38g', fat:'4g' },
-                'rava upma':{ name:'Rava Upma', serving:'1 cup (200g)', calories:198, protein:'5g', carbs:'38g', fat:'4g' },
-                'aloo tikki':{ name:'Aloo Tikki', serving:'2 tikkis (120g)', calories:245, protein:'4g', carbs:'38g', fat:'9g' },
-                'ragda pattice':{ name:'Ragda Pattice', serving:'2 pattice + ragda (250g)', calories:320, protein:'10g', carbs:'52g', fat:'9g' },
-                'vada pav':{ name:'Vada Pav', serving:'1 piece (130g)', calories:286, protein:'7g', carbs:'42g', fat:'10g' },
-                'misal pav':{ name:'Misal Pav', serving:'1 bowl + 2 pav (350g)', calories:415, protein:'16g', carbs:'58g', fat:'14g' },
-                'dahi vada':{ name:'Dahi Vada', serving:'2 pieces (150g)', calories:225, protein:'10g', carbs:'30g', fat:'7g' },
-                'papdi chaat':{ name:'Papdi Chaat', serving:'1 plate (150g)', calories:285, protein:'8g', carbs:'42g', fat:'9g' },
-                'aloo chaat':{ name:'Aloo Chaat', serving:'1 plate (150g)', calories:215, protein:'4g', carbs:'38g', fat:'6g' },
-                'kathi roll':{ name:'Kathi Roll (Chicken)', serving:'1 roll (200g)', calories:355, protein:'22g', carbs:'38g', fat:'12g' },
-                'chicken roll':{ name:'Chicken Roll', serving:'1 roll (200g)', calories:355, protein:'22g', carbs:'38g', fat:'12g' },
-                'frankie':{ name:'Veg Frankie', serving:'1 roll (180g)', calories:285, protein:'8g', carbs:'42g', fat:'9g' },
-                'tikki burger':{ name:'Aloo Tikki Burger', serving:'1 burger (150g)', calories:295, protein:'6g', carbs:'44g', fat:'10g' },
-                'dabeli':{ name:'Kutchi Dabeli', serving:'1 piece (100g)', calories:245, protein:'5g', carbs:'40g', fat:'8g' },
-                'chakli':{ name:'Chakli', serving:'4 pieces (40g)', calories:175, protein:'3g', carbs:'22g', fat:'8g' },
-                'murukku':{ name:'Murukku', serving:'4 pieces (40g)', calories:185, protein:'3g', carbs:'24g', fat:'9g' },
-                'sev':{ name:'Sev (Besan Noodles)', serving:'1 handful (30g)', calories:155, protein:'4g', carbs:'18g', fat:'8g' },
-                'khakhra':{ name:'Khakhra', serving:'2 pieces (40g)', calories:148, protein:'4g', carbs:'22g', fat:'5g' },
-                'mathri':{ name:'Mathri', serving:'3 pieces (45g)', calories:180, protein:'3g', carbs:'22g', fat:'9g' },
-                'namkeen':{ name:'Namkeen/Mixture', serving:'1 handful (30g)', calories:135, protein:'3g', carbs:'18g', fat:'6g' },
-                'boondi':{ name:'Boondi', serving:'2 tbsp (30g)', calories:125, protein:'3g', carbs:'16g', fat:'6g' },
+                'samosa':{ name:'Samosa', serving:'1 medium (50g)', calories:153, protein:'3g', carbs:'18g', fat:'8g', pranic:'Low Pranic' },
+                'pakora':{ name:'Vegetable Pakora', serving:'5 pieces (75g)', calories:185, protein:'4g', carbs:'22g', fat:'9g', pranic:'Low Pranic' },
+                'onion pakora':{ name:'Onion Pakora', serving:'5 pieces (75g)', calories:190, protein:'4g', carbs:'24g', fat:'9g', pranic:'Non-Pranic' },
+                'paneer pakora':{ name:'Paneer Pakora', serving:'4 pieces (80g)', calories:270, protein:'12g', carbs:'18g', fat:'17g', pranic:'Low Pranic' },
+                'kachori':{ name:'Kachori', serving:'1 medium (50g)', calories:178, protein:'4g', carbs:'20g', fat:'9g', pranic:'Low Pranic' },
+                'bhel puri':{ name:'Bhel Puri', serving:'1 cup (100g)', calories:168, protein:'4g', carbs:'30g', fat:'4g', pranic:'High Pranic' },
+                'pani puri':{ name:'Pani Puri', serving:'6 pieces (100g)', calories:125, protein:'3g', carbs:'25g', fat:'2g', pranic:'High Pranic' },
+                'sev puri':{ name:'Sev Puri', serving:'5 pieces (100g)', calories:185, protein:'4g', carbs:'28g', fat:'7g', pranic:'High Pranic' },
+                'dahi puri':{ name:'Dahi Puri', serving:'6 pieces (130g)', calories:215, protein:'6g', carbs:'34g', fat:'6g', pranic:'High Pranic' },
+                'dhokla':{ name:'Dhokla', serving:'2 pieces (100g)', calories:160, protein:'5g', carbs:'28g', fat:'3g', pranic:'High Pranic' },
+                'khandvi':{ name:'Khandvi', serving:'3 pieces (60g)', calories:115, protein:'4g', carbs:'16g', fat:'4g', pranic:'High Pranic' },
+                'fafda':{ name:'Fafda', serving:'4 pieces (50g)', calories:198, protein:'5g', carbs:'20g', fat:'11g', pranic:'Low Pranic' },
+                'poha':{ name:'Poha (Beaten Rice)', serving:'1 cup (150g)', calories:180, protein:'4g', carbs:'35g', fat:'3g', pranic:'High Pranic' },
+                'upma':{ name:'Upma', serving:'1 cup (200g)', calories:198, protein:'5g', carbs:'38g', fat:'4g', pranic:'High Pranic' },
+                'rava upma':{ name:'Rava Upma', serving:'1 cup (200g)', calories:198, protein:'5g', carbs:'38g', fat:'4g', pranic:'High Pranic' },
+                'aloo tikki':{ name:'Aloo Tikki', serving:'2 tikkis (120g)', calories:245, protein:'4g', carbs:'38g', fat:'9g', pranic:'High Pranic' },
+                'ragda pattice':{ name:'Ragda Pattice', serving:'2 pattice + ragda (250g)', calories:320, protein:'10g', carbs:'52g', fat:'9g', pranic:'High Pranic' },
+                'vada pav':{ name:'Vada Pav', serving:'1 piece (130g)', calories:286, protein:'7g', carbs:'42g', fat:'10g', pranic:'Low Pranic' },
+                'misal pav':{ name:'Misal Pav', serving:'1 bowl + 2 pav (350g)', calories:415, protein:'16g', carbs:'58g', fat:'14g', pranic:'High Pranic' },
+                'dahi vada':{ name:'Dahi Vada', serving:'2 pieces (150g)', calories:225, protein:'10g', carbs:'30g', fat:'7g', pranic:'High Pranic' },
+                'papdi chaat':{ name:'Papdi Chaat', serving:'1 plate (150g)', calories:285, protein:'8g', carbs:'42g', fat:'9g', pranic:'High Pranic' },
+                'aloo chaat':{ name:'Aloo Chaat', serving:'1 plate (150g)', calories:215, protein:'4g', carbs:'38g', fat:'6g', pranic:'High Pranic' },
+                'kathi roll':{ name:'Kathi Roll (Chicken)', serving:'1 roll (200g)', calories:355, protein:'22g', carbs:'38g', fat:'12g', pranic:'Non-Pranic' },
+                'chicken roll':{ name:'Chicken Roll', serving:'1 roll (200g)', calories:355, protein:'22g', carbs:'38g', fat:'12g', pranic:'Non-Pranic' },
+                'frankie':{ name:'Veg Frankie', serving:'1 roll (180g)', calories:285, protein:'8g', carbs:'42g', fat:'9g', pranic:'High Pranic' },
+                'tikki burger':{ name:'Aloo Tikki Burger', serving:'1 burger (150g)', calories:295, protein:'6g', carbs:'44g', fat:'10g', pranic:'High Pranic' },
+                'dabeli':{ name:'Kutchi Dabeli', serving:'1 piece (100g)', calories:245, protein:'5g', carbs:'40g', fat:'8g', pranic:'High Pranic' },
+                'chakli':{ name:'Chakli', serving:'4 pieces (40g)', calories:175, protein:'3g', carbs:'22g', fat:'8g', pranic:'Low Pranic' },
+                'murukku':{ name:'Murukku', serving:'4 pieces (40g)', calories:185, protein:'3g', carbs:'24g', fat:'9g', pranic:'Low Pranic' },
+                'sev':{ name:'Sev (Besan Noodles)', serving:'1 handful (30g)', calories:155, protein:'4g', carbs:'18g', fat:'8g', pranic:'Low Pranic' },
+                'khakhra':{ name:'Khakhra', serving:'2 pieces (40g)', calories:148, protein:'4g', carbs:'22g', fat:'5g', pranic:'High Pranic' },
+                'mathri':{ name:'Mathri', serving:'3 pieces (45g)', calories:180, protein:'3g', carbs:'22g', fat:'9g', pranic:'Low Pranic' },
+                'namkeen':{ name:'Namkeen/Mixture', serving:'1 handful (30g)', calories:135, protein:'3g', carbs:'18g', fat:'6g', pranic:'Low Pranic' },
+                'boondi':{ name:'Boondi', serving:'2 tbsp (30g)', calories:125, protein:'3g', carbs:'16g', fat:'6g', pranic:'Low Pranic' },
 
                 // ── INDIAN DAIRY ──
-                'paneer':{ name:'Paneer (Cottage Cheese)', serving:'100g', calories:265, protein:'18g', carbs:'3.6g', fat:'20g' },
-                'low fat paneer':{ name:'Low Fat Paneer', serving:'100g', calories:186, protein:'18g', carbs:'4g', fat:'11g' },
-                'ghee':{ name:'Ghee (Clarified Butter)', serving:'1 tbsp (14g)', calories:112, protein:'0g', carbs:'0g', fat:'13g' },
-                'dahi':{ name:'Dahi (Curd)', serving:'1 cup (240g)', calories:154, protein:'13g', carbs:'17g', fat:'4g' },
-                'low fat dahi':{ name:'Low Fat Dahi', serving:'1 cup (240g)', calories:105, protein:'12g', carbs:'16g', fat:'0.4g' },
-                'lassi':{ name:'Sweet Lassi', serving:'1 glass (240ml)', calories:168, protein:'8g', carbs:'26g', fat:'4g' },
-                'salted lassi':{ name:'Salted Lassi (Namkeen)', serving:'1 glass (240ml)', calories:95, protein:'9g', carbs:'12g', fat:'3g' },
-                'buttermilk':{ name:'Buttermilk (Chaas)', serving:'1 glass (240ml)', calories:62, protein:'7g', carbs:'8g', fat:'1g' },
-                'spiced buttermilk':{ name:'Masala Chaas', serving:'1 glass (240ml)', calories:65, protein:'7g', carbs:'8g', fat:'1g' },
-                'mango lassi':{ name:'Mango Lassi', serving:'1 glass (250ml)', calories:215, protein:'7g', carbs:'38g', fat:'4g' },
-                'kheer':{ name:'Kheer (Rice Pudding)', serving:'1 cup (200g)', calories:285, protein:'8g', carbs:'42g', fat:'10g' },
-                'raita':{ name:'Cucumber Raita', serving:'1 cup (200g)', calories:85, protein:'6g', carbs:'10g', fat:'2.5g' },
-                'boondi raita':{ name:'Boondi Raita', serving:'1 cup (200g)', calories:165, protein:'7g', carbs:'22g', fat:'5g' },
-                'shrikhand':{ name:'Shrikhand', serving:'100g', calories:215, protein:'7g', carbs:'32g', fat:'7g' },
-                'mishti doi':{ name:'Mishti Doi (Sweet Curd)', serving:'100g', calories:130, protein:'5g', carbs:'20g', fat:'3.5g' },
+                'paneer':{ name:'Paneer (Cottage Cheese)', serving:'100g', calories:265, protein:'18g', carbs:'3.6g', fat:'20g', pranic:'High Pranic' },
+                'low fat paneer':{ name:'Low Fat Paneer', serving:'100g', calories:186, protein:'18g', carbs:'4g', fat:'11g', pranic:'High Pranic' },
+                'ghee':{ name:'Ghee (Clarified Butter)', serving:'1 tbsp (14g)', calories:112, protein:'0g', carbs:'0g', fat:'13g', pranic:'High Pranic' },
+                'dahi':{ name:'Dahi (Curd)', serving:'1 cup (240g)', calories:154, protein:'13g', carbs:'17g', fat:'4g', pranic:'High Pranic' },
+                'low fat dahi':{ name:'Low Fat Dahi', serving:'1 cup (240g)', calories:105, protein:'12g', carbs:'16g', fat:'0.4g', pranic:'High Pranic' },
+                'lassi':{ name:'Sweet Lassi', serving:'1 glass (240ml)', calories:168, protein:'8g', carbs:'26g', fat:'4g', pranic:'High Pranic' },
+                'salted lassi':{ name:'Salted Lassi (Namkeen)', serving:'1 glass (240ml)', calories:95, protein:'9g', carbs:'12g', fat:'3g', pranic:'High Pranic' },
+                'buttermilk':{ name:'Buttermilk (Chaas)', serving:'1 glass (240ml)', calories:62, protein:'7g', carbs:'8g', fat:'1g', pranic:'High Pranic' },
+                'spiced buttermilk':{ name:'Masala Chaas', serving:'1 glass (240ml)', calories:65, protein:'7g', carbs:'8g', fat:'1g', pranic:'High Pranic' },
+                'mango lassi':{ name:'Mango Lassi', serving:'1 glass (250ml)', calories:215, protein:'7g', carbs:'38g', fat:'4g', pranic:'High Pranic' },
+                'kheer':{ name:'Kheer (Rice Pudding)', serving:'1 cup (200g)', calories:285, protein:'8g', carbs:'42g', fat:'10g', pranic:'High Pranic' },
+                'raita':{ name:'Cucumber Raita', serving:'1 cup (200g)', calories:85, protein:'6g', carbs:'10g', fat:'2.5g', pranic:'High Pranic' },
+                'boondi raita':{ name:'Boondi Raita', serving:'1 cup (200g)', calories:165, protein:'7g', carbs:'22g', fat:'5g', pranic:'High Pranic' },
+                'shrikhand':{ name:'Shrikhand', serving:'100g', calories:215, protein:'7g', carbs:'32g', fat:'7g', pranic:'High Pranic' },
+                'mishti doi':{ name:'Mishti Doi (Sweet Curd)', serving:'100g', calories:130, protein:'5g', carbs:'20g', fat:'3.5g', pranic:'High Pranic' },
 
                 // ── INDIAN SWEETS & DESSERTS ──
-                'gulab jamun':{ name:'Gulab Jamun', serving:'2 pieces (60g)', calories:175, protein:'3g', carbs:'28g', fat:'6g' },
-                'jalebi':{ name:'Jalebi', serving:'2 pieces (50g)', calories:150, protein:'1.5g', carbs:'32g', fat:'2.5g' },
-                'ladoo':{ name:'Besan Ladoo', serving:'1 medium (40g)', calories:168, protein:'4g', carbs:'22g', fat:'7g' },
-                'motichur ladoo':{ name:'Motichur Ladoo', serving:'1 medium (40g)', calories:158, protein:'3g', carbs:'24g', fat:'6g' },
-                'rava ladoo':{ name:'Rava Ladoo', serving:'1 medium (40g)', calories:172, protein:'3.5g', carbs:'24g', fat:'7g' },
-                'dry fruit ladoo':{ name:'Dry Fruit Ladoo', serving:'1 medium (40g)', calories:145, protein:'3g', carbs:'18g', fat:'7g' },
-                'barfi':{ name:'Milk Barfi', serving:'1 piece (30g)', calories:125, protein:'3.5g', carbs:'18g', fat:'4.5g' },
-                'kaju barfi':{ name:'Kaju Katli', serving:'2 pieces (30g)', calories:170, protein:'4g', carbs:'22g', fat:'8g' },
-                'halwa':{ name:'Sooji Halwa', serving:'1 cup (150g)', calories:385, protein:'6g', carbs:'55g', fat:'16g' },
-                'gajar halwa':{ name:'Gajar Halwa (Carrot)', serving:'1 cup (150g)', calories:298, protein:'6g', carbs:'40g', fat:'13g' },
-                'carrot halwa':{ name:'Carrot Halwa', serving:'1 cup (150g)', calories:298, protein:'6g', carbs:'40g', fat:'13g' },
-                'moong dal halwa':{ name:'Moong Dal Halwa', serving:'1 cup (150g)', calories:425, protein:'10g', carbs:'48g', fat:'22g' },
-                'rasmalai':{ name:'Rasmalai', serving:'2 pieces (100g)', calories:186, protein:'8g', carbs:'24g', fat:'7g' },
-                'rasgulla':{ name:'Rasgulla', serving:'2 pieces (100g)', calories:186, protein:'6g', carbs:'30g', fat:'5g' },
-                'sandesh':{ name:'Sandesh', serving:'2 pieces (60g)', calories:128, protein:'6g', carbs:'16g', fat:'5g' },
-                'peda':{ name:'Peda (Milk Sweet)', serving:'2 pieces (50g)', calories:185, protein:'5g', carbs:'28g', fat:'6g' },
+                'gulab jamun':{ name:'Gulab Jamun', serving:'2 pieces (60g)', calories:175, protein:'3g', carbs:'28g', fat:'6g', pranic:'High Pranic' },
+                'jalebi':{ name:'Jalebi', serving:'2 pieces (50g)', calories:150, protein:'1.5g', carbs:'32g', fat:'2.5g', pranic:'Low Pranic' },
+                'ladoo':{ name:'Besan Ladoo', serving:'1 medium (40g)', calories:168, protein:'4g', carbs:'22g', fat:'7g', pranic:'High Pranic' },
+                'motichur ladoo':{ name:'Motichur Ladoo', serving:'1 medium (40g)', calories:158, protein:'3g', carbs:'24g', fat:'6g', pranic:'High Pranic' },
+                'rava ladoo':{ name:'Rava Ladoo', serving:'1 medium (40g)', calories:172, protein:'3.5g', carbs:'24g', fat:'7g', pranic:'High Pranic' },
+                'dry fruit ladoo':{ name:'Dry Fruit Ladoo', serving:'1 medium (40g)', calories:145, protein:'3g', carbs:'18g', fat:'7g', pranic:'High Pranic' },
+                'barfi':{ name:'Milk Barfi', serving:'1 piece (30g)', calories:125, protein:'3.5g', carbs:'18g', fat:'4.5g', pranic:'High Pranic' },
+                'kaju barfi':{ name:'Kaju Katli', serving:'2 pieces (30g)', calories:170, protein:'4g', carbs:'22g', fat:'8g', pranic:'High Pranic' },
+                'halwa':{ name:'Sooji Halwa', serving:'1 cup (150g)', calories:385, protein:'6g', carbs:'55g', fat:'16g', pranic:'High Pranic' },
+                'gajar halwa':{ name:'Gajar Halwa (Carrot)', serving:'1 cup (150g)', calories:298, protein:'6g', carbs:'40g', fat:'13g', pranic:'High Pranic' },
+                'carrot halwa':{ name:'Carrot Halwa', serving:'1 cup (150g)', calories:298, protein:'6g', carbs:'40g', fat:'13g', pranic:'High Pranic' },
+                'moong dal halwa':{ name:'Moong Dal Halwa', serving:'1 cup (150g)', calories:425, protein:'10g', carbs:'48g', fat:'22g', pranic:'High Pranic' },
+                'rasmalai':{ name:'Rasmalai', serving:'2 pieces (100g)', calories:186, protein:'8g', carbs:'24g', fat:'7g', pranic:'High Pranic' },
+                'rasgulla':{ name:'Rasgulla', serving:'2 pieces (100g)', calories:186, protein:'6g', carbs:'30g', fat:'5g', pranic:'High Pranic' },
+                'sandesh':{ name:'Sandesh', serving:'2 pieces (60g)', calories:128, protein:'6g', carbs:'16g', fat:'5g', pranic:'High Pranic' },
+                'peda':{ name:'Peda (Milk Sweet)', serving:'2 pieces (50g)', calories:185, protein:'5g', carbs:'28g', fat:'6g', pranic:'High Pranic' },
                 'imarti':{ name:'Imarti', serving:'1 piece (50g)', calories:162, protein:'2g', carbs:'30g', fat:'4g' },
                 'chum chum':{ name:'Chum Chum', serving:'2 pieces (80g)', calories:170, protein:'6g', carbs:'26g', fat:'5g' },
-                'kalakand':{ name:'Kalakand', serving:'1 piece (50g)', calories:178, protein:'6g', carbs:'24g', fat:'7g' },
-                'phirni':{ name:'Phirni (Rice Pudding)', serving:'1 bowl (150g)', calories:215, protein:'6g', carbs:'35g', fat:'6g' },
-                'kulfi':{ name:'Kulfi', serving:'1 stick (80g)', calories:168, protein:'4g', carbs:'22g', fat:'7g' },
-                'falooda':{ name:'Falooda', serving:'1 glass (350ml)', calories:280, protein:'7g', carbs:'48g', fat:'7g' },
-                'zarda':{ name:'Zarda (Sweet Rice)', serving:'1 cup (150g)', calories:345, protein:'4g', carbs:'60g', fat:'10g' },
+                'kalakand':{ name:'Kalakand', serving:'1 piece (50g)', calories:178, protein:'6g', carbs:'24g', fat:'7g', pranic:'High Pranic' },
+                'phirni':{ name:'Phirni (Rice Pudding)', serving:'1 bowl (150g)', calories:215, protein:'6g', carbs:'35g', fat:'6g', pranic:'High Pranic' },
+                'kulfi':{ name:'Kulfi', serving:'1 stick (80g)', calories:168, protein:'4g', carbs:'22g', fat:'7g', pranic:'High Pranic' },
+                'falooda':{ name:'Falooda', serving:'1 glass (350ml)', calories:280, protein:'7g', carbs:'48g', fat:'7g', pranic:'High Pranic' },
+                'zarda':{ name:'Zarda (Sweet Rice)', serving:'1 cup (150g)', calories:345, protein:'4g', carbs:'60g', fat:'10g', pranic:'Low Pranic' },
 
                 // ── INDIAN BREAKFAST ITEMS ──
                 'poha':{ name:'Poha', serving:'1 cup (150g)', calories:180, protein:'4g', carbs:'35g', fat:'3g' },
@@ -1217,179 +1290,179 @@
                 'upma':{ name:'Upma', serving:'1 cup (200g)', calories:198, protein:'5g', carbs:'38g', fat:'4g' },
                 'rava upma':{ name:'Rava Upma', serving:'1 cup (200g)', calories:198, protein:'5g', carbs:'38g', fat:'4g' },
                 'vermicelli upma':{ name:'Vermicelli Upma (Seviyan)', serving:'1 cup (200g)', calories:210, protein:'5g', carbs:'40g', fat:'4g' },
-                'sabudana khichdi':{ name:'Sabudana Khichdi', serving:'1 cup (200g)', calories:285, protein:'4g', carbs:'52g', fat:'8g' },
-                'sabudana vada':{ name:'Sabudana Vada', serving:'2 pieces (80g)', calories:220, protein:'4g', carbs:'35g', fat:'8g' },
-                'sheera':{ name:'Sheera (Sooji Halwa)', serving:'1 cup (120g)', calories:295, protein:'4.5g', carbs:'44g', fat:'12g' },
-                'makhana':{ name:'Roasted Makhana', serving:'1 cup (32g)', calories:111, protein:'3.9g', carbs:'20g', fat:'0.5g' },
-                'murmura':{ name:'Murmura (Puffed Rice)', serving:'1 cup (15g)', calories:53, protein:'1g', carbs:'12g', fat:'0.2g' },
-                'corn flakes':{ name:'Corn Flakes', serving:'1 cup (28g)', calories:101, protein:'2g', carbs:'24g', fat:'0.2g' },
-                'sprouts':{ name:'Mixed Sprouts', serving:'1 cup (100g)', calories:85, protein:'6g', carbs:'14g', fat:'0.5g' },
-                'moong sprouts':{ name:'Moong Sprouts', serving:'1 cup (100g)', calories:78, protein:'6g', carbs:'13g', fat:'0.4g' },
+                'sabudana khichdi':{ name:'Sabudana Khichdi', serving:'1 cup (200g)', calories:285, protein:'4g', carbs:'52g', fat:'8g', pranic:'High Pranic' },
+                'sabudana vada':{ name:'Sabudana Vada', serving:'2 pieces (80g)', calories:220, protein:'4g', carbs:'35g', fat:'8g', pranic:'Low Pranic' },
+                'sheera':{ name:'Sheera (Sooji Halwa)', serving:'1 cup (120g)', calories:295, protein:'4.5g', carbs:'44g', fat:'12g', pranic:'High Pranic' },
+                'makhana':{ name:'Roasted Makhana', serving:'1 cup (32g)', calories:111, protein:'3.9g', carbs:'20g', fat:'0.5g', pranic:'High Pranic' },
+                'murmura':{ name:'Murmura (Puffed Rice)', serving:'1 cup (15g)', calories:53, protein:'1g', carbs:'12g', fat:'0.2g', pranic:'High Pranic' },
+                'corn flakes':{ name:'Corn Flakes', serving:'1 cup (28g)', calories:101, protein:'2g', carbs:'24g', fat:'0.2g', pranic:'Low Pranic' },
+                'sprouts':{ name:'Mixed Sprouts', serving:'1 cup (100g)', calories:85, protein:'6g', carbs:'14g', fat:'0.5g', pranic:'High Pranic' },
+                'moong sprouts':{ name:'Moong Sprouts', serving:'1 cup (100g)', calories:78, protein:'6g', carbs:'13g', fat:'0.4g', pranic:'High Pranic' },
 
                 // ── INDIAN BREADS (EXTRAS) ──
-                'thepla':{ name:'Thepla', serving:'2 pieces (80g)', calories:215, protein:'5g', carbs:'30g', fat:'8g' },
-                'puran poli':{ name:'Puran Poli', serving:'1 piece (80g)', calories:268, protein:'6g', carbs:'44g', fat:'7g' },
-                'akki roti':{ name:'Akki Roti', serving:'1 medium (60g)', calories:152, protein:'3g', carbs:'28g', fat:'3g' },
-                'amboli':{ name:'Amboli (Rice Pancake)', serving:'2 pieces (100g)', calories:175, protein:'4g', carbs:'35g', fat:'2g' },
-                'pathiri':{ name:'Pathiri (Rice Roti)', serving:'1 piece (50g)', calories:115, protein:'2.5g', carbs:'24g', fat:'0.5g' },
+                'thepla':{ name:'Thepla', serving:'2 pieces (80g)', calories:215, protein:'5g', carbs:'30g', fat:'8g', pranic:'High Pranic' },
+                'puran poli':{ name:'Puran Poli', serving:'1 piece (80g)', calories:268, protein:'6g', carbs:'44g', fat:'7g', pranic:'High Pranic' },
+                'akki roti':{ name:'Akki Roti', serving:'1 medium (60g)', calories:152, protein:'3g', carbs:'28g', fat:'3g', pranic:'High Pranic' },
+                'amboli':{ name:'Amboli (Rice Pancake)', serving:'2 pieces (100g)', calories:175, protein:'4g', carbs:'35g', fat:'2g', pranic:'High Pranic' },
+                'pathiri':{ name:'Pathiri (Rice Roti)', serving:'1 piece (50g)', calories:115, protein:'2.5g', carbs:'24g', fat:'0.5g', pranic:'High Pranic' },
 
                 // ── INDIAN CHUTNEYS & ACCOMPANIMENTS ──
-                'coconut chutney':{ name:'Coconut Chutney', serving:'2 tbsp (30g)', calories:58, protein:'0.8g', carbs:'3g', fat:'5g' },
-                'green chutney':{ name:'Green Chutney (Coriander-Mint)', serving:'2 tbsp (30g)', calories:18, protein:'0.5g', carbs:'3g', fat:'0.5g' },
-                'tamarind chutney':{ name:'Tamarind Chutney', serving:'2 tbsp (30g)', calories:45, protein:'0.3g', carbs:'11g', fat:'0.1g' },
-                'pickle':{ name:'Mango Pickle (Achar)', serving:'1 tsp (10g)', calories:22, protein:'0.3g', carbs:'3g', fat:'1g' },
-                'papad':{ name:'Papad (roasted)', serving:'1 piece (10g)', calories:38, protein:'2g', carbs:'5g', fat:'1g' },
-                'fried papad':{ name:'Fried Papad', serving:'1 piece (10g)', calories:58, protein:'2g', carbs:'5g', fat:'3g' },
+                'coconut chutney':{ name:'Coconut Chutney', serving:'2 tbsp (30g)', calories:58, protein:'0.8g', carbs:'3g', fat:'5g', pranic:'High Pranic' },
+                'green chutney':{ name:'Green Chutney (Coriander-Mint)', serving:'2 tbsp (30g)', calories:18, protein:'0.5g', carbs:'3g', fat:'0.5g', pranic:'High Pranic' },
+                'tamarind chutney':{ name:'Tamarind Chutney', serving:'2 tbsp (30g)', calories:45, protein:'0.3g', carbs:'11g', fat:'0.1g', pranic:'High Pranic' },
+                'pickle':{ name:'Mango Pickle (Achar)', serving:'1 tsp (10g)', calories:22, protein:'0.3g', carbs:'3g', fat:'1g', pranic:'Low Pranic' },
+                'papad':{ name:'Papad (roasted)', serving:'1 piece (10g)', calories:38, protein:'2g', carbs:'5g', fat:'1g', pranic:'High Pranic' },
+                'fried papad':{ name:'Fried Papad', serving:'1 piece (10g)', calories:58, protein:'2g', carbs:'5g', fat:'3g', pranic:'Low Pranic' },
 
                 // ── INDIAN DRINKS ──
-                'masala chai':{ name:'Masala Chai (with milk, no sugar)', serving:'1 cup (200ml)', calories:65, protein:'3g', carbs:'8g', fat:'2.5g' },
-                'masala chai sugar':{ name:'Masala Chai (with milk & sugar)', serving:'1 cup (200ml)', calories:95, protein:'3g', carbs:'14g', fat:'2.5g' },
-                'filter coffee':{ name:'Filter Coffee (with milk)', serving:'1 cup (150ml)', calories:72, protein:'3g', carbs:'9g', fat:'2.8g' },
-                'coconut water':{ name:'Coconut Water', serving:'1 glass (240ml)', calories:46, protein:'1.7g', carbs:'9g', fat:'0.5g' },
-                'nimbu pani':{ name:'Nimbu Pani (Lemonade)', serving:'1 glass (250ml)', calories:35, protein:'0.3g', carbs:'9g', fat:'0g' },
-                'aam panna':{ name:'Aam Panna', serving:'1 glass (250ml)', calories:68, protein:'0.5g', carbs:'17g', fat:'0.1g' },
-                'jaljeera':{ name:'Jaljeera', serving:'1 glass (250ml)', calories:28, protein:'0.8g', carbs:'7g', fat:'0.3g' },
-                'kanji':{ name:'Kanji', serving:'1 glass (250ml)', calories:35, protein:'1g', carbs:'8g', fat:'0.2g' },
-                'rose sharbat':{ name:'Rose Sharbat', serving:'1 glass (250ml)', calories:115, protein:'0.2g', carbs:'28g', fat:'0g' },
-                'thandai':{ name:'Thandai', serving:'1 glass (250ml)', calories:195, protein:'6g', carbs:'28g', fat:'7g' },
-                'haldi doodh':{ name:'Haldi Doodh (Turmeric Milk)', serving:'1 cup (200ml)', calories:110, protein:'6g', carbs:'10g', fat:'5g' },
-                'badam milk':{ name:'Badam Milk', serving:'1 cup (200ml)', calories:165, protein:'7g', carbs:'18g', fat:'7g' },
+                'masala chai':{ name:'Masala Chai (with milk, no sugar)', serving:'1 cup (200ml)', calories:65, protein:'3g', carbs:'8g', fat:'2.5g', pranic:'Low Pranic' },
+                'masala chai sugar':{ name:'Masala Chai (with milk & sugar)', serving:'1 cup (200ml)', calories:95, protein:'3g', carbs:'14g', fat:'2.5g', pranic:'Low Pranic' },
+                'filter coffee':{ name:'Filter Coffee (with milk)', serving:'1 cup (150ml)', calories:72, protein:'3g', carbs:'9g', fat:'2.8g', pranic:'Low Pranic' },
+                'coconut water':{ name:'Coconut Water', serving:'1 glass (240ml)', calories:46, protein:'1.7g', carbs:'9g', fat:'0.5g', pranic:'High Pranic' },
+                'nimbu pani':{ name:'Nimbu Pani (Lemonade)', serving:'1 glass (250ml)', calories:35, protein:'0.3g', carbs:'9g', fat:'0g', pranic:'High Pranic' },
+                'aam panna':{ name:'Aam Panna', serving:'1 glass (250ml)', calories:68, protein:'0.5g', carbs:'17g', fat:'0.1g', pranic:'High Pranic' },
+                'jaljeera':{ name:'Jaljeera', serving:'1 glass (250ml)', calories:28, protein:'0.8g', carbs:'7g', fat:'0.3g', pranic:'High Pranic' },
+                'kanji':{ name:'Kanji', serving:'1 glass (250ml)', calories:35, protein:'1g', carbs:'8g', fat:'0.2g', pranic:'High Pranic' },
+                'rose sharbat':{ name:'Rose Sharbat', serving:'1 glass (250ml)', calories:115, protein:'0.2g', carbs:'28g', fat:'0g', pranic:'High Pranic' },
+                'thandai':{ name:'Thandai', serving:'1 glass (250ml)', calories:195, protein:'6g', carbs:'28g', fat:'7g', pranic:'High Pranic' },
+                'haldi doodh':{ name:'Haldi Doodh (Turmeric Milk)', serving:'1 cup (200ml)', calories:110, protein:'6g', carbs:'10g', fat:'5g', pranic:'High Pranic' },
+                'badam milk':{ name:'Badam Milk', serving:'1 cup (200ml)', calories:165, protein:'7g', carbs:'18g', fat:'7g', pranic:'High Pranic' },
 
                 // ── INDIAN FRUITS ──
-                'mango':{ name:'Mango', serving:'1 cup (165g)', calories:99, protein:'1.4g', carbs:'25g', fat:'0.6g' },
-                'alphonso mango':{ name:'Alphonso Mango', serving:'1 medium (200g)', calories:130, protein:'1.8g', carbs:'32g', fat:'0.7g' },
-                'papaya':{ name:'Papaya', serving:'1 cup (140g)', calories:55, protein:'0.9g', carbs:'14g', fat:'0.2g' },
-                'pomegranate':{ name:'Pomegranate', serving:'1/2 fruit (87g)', calories:72, protein:'1.5g', carbs:'16g', fat:'1g' },
-                'guava':{ name:'Guava', serving:'1 medium (55g)', calories:37, protein:'1.4g', carbs:'8g', fat:'0.5g' },
-                'chikoo':{ name:'Chikoo (Sapota)', serving:'1 medium (100g)', calories:83, protein:'0.4g', carbs:'20g', fat:'1.1g' },
-                'sitaphal':{ name:'Sitaphal (Custard Apple)', serving:'1/2 fruit (100g)', calories:94, protein:'2g', carbs:'22g', fat:'0.5g' },
-                'jamun':{ name:'Jamun (Java Plum)', serving:'1 cup (100g)', calories:60, protein:'0.7g', carbs:'14g', fat:'0.2g' },
-                'karonda':{ name:'Karonda (Natal Plum)', serving:'1 cup (100g)', calories:42, protein:'0.5g', carbs:'9g', fat:'0.7g' },
-                'amla':{ name:'Amla (Indian Gooseberry)', serving:'1 medium (30g)', calories:13, protein:'0.3g', carbs:'3g', fat:'0.1g' },
-                'ber':{ name:'Ber (Jujube)', serving:'5 pieces (50g)', calories:36, protein:'0.5g', carbs:'8.5g', fat:'0.1g' },
-                'banana':{ name:'Banana', serving:'1 medium (118g)', calories:105, protein:'1.3g', carbs:'27g', fat:'0.4g' },
-                'apple':{ name:'Apple', serving:'1 medium (182g)', calories:95, protein:'0.5g', carbs:'25g', fat:'0.3g' },
-                'orange':{ name:'Orange', serving:'1 medium (131g)', calories:62, protein:'1.2g', carbs:'15g', fat:'0.2g' },
-                'watermelon':{ name:'Watermelon', serving:'1 cup (152g)', calories:46, protein:'0.9g', carbs:'12g', fat:'0.2g' },
-                'pineapple':{ name:'Pineapple', serving:'1 cup (165g)', calories:82, protein:'0.9g', carbs:'22g', fat:'0.2g' },
-                'grapes':{ name:'Grapes', serving:'1 cup (151g)', calories:104, protein:'1.1g', carbs:'27g', fat:'0.2g' },
-                'strawberry':{ name:'Strawberries', serving:'1 cup (152g)', calories:49, protein:'1g', carbs:'12g', fat:'0.5g' },
-                'strawberries':{ name:'Strawberries', serving:'1 cup (152g)', calories:49, protein:'1g', carbs:'12g', fat:'0.5g' },
-                'kiwi':{ name:'Kiwi', serving:'1 medium (69g)', calories:42, protein:'0.8g', carbs:'10g', fat:'0.4g' },
-                'pear':{ name:'Pear', serving:'1 medium (178g)', calories:101, protein:'0.6g', carbs:'27g', fat:'0.2g' },
-                'blueberries':{ name:'Blueberries', serving:'1 cup (148g)', calories:84, protein:'1.1g', carbs:'21g', fat:'0.5g' },
+                'mango':{ name:'Mango', serving:'1 cup (165g)', calories:99, protein:'1.4g', carbs:'25g', fat:'0.6g', pranic:'High Pranic' },
+                'alphonso mango':{ name:'Alphonso Mango', serving:'1 medium (200g)', calories:130, protein:'1.8g', carbs:'32g', fat:'0.7g', pranic:'High Pranic' },
+                'papaya':{ name:'Papaya', serving:'1 cup (140g)', calories:55, protein:'0.9g', carbs:'14g', fat:'0.2g', pranic:'High Pranic' },
+                'pomegranate':{ name:'Pomegranate', serving:'1/2 fruit (87g)', calories:72, protein:'1.5g', carbs:'16g', fat:'1g', pranic:'High Pranic' },
+                'guava':{ name:'Guava', serving:'1 medium (55g)', calories:37, protein:'1.4g', carbs:'8g', fat:'0.5g', pranic:'High Pranic' },
+                'chikoo':{ name:'Chikoo (Sapota)', serving:'1 medium (100g)', calories:83, protein:'0.4g', carbs:'20g', fat:'1.1g', pranic:'High Pranic' },
+                'sitaphal':{ name:'Sitaphal (Custard Apple)', serving:'1/2 fruit (100g)', calories:94, protein:'2g', carbs:'22g', fat:'0.5g', pranic:'High Pranic' },
+                'jamun':{ name:'Jamun (Java Plum)', serving:'1 cup (100g)', calories:60, protein:'0.7g', carbs:'14g', fat:'0.2g', pranic:'High Pranic' },
+                'karonda':{ name:'Karonda (Natal Plum)', serving:'1 cup (100g)', calories:42, protein:'0.5g', carbs:'9g', fat:'0.7g', pranic:'High Pranic' },
+                'amla':{ name:'Amla (Indian Gooseberry)', serving:'1 medium (30g)', calories:13, protein:'0.3g', carbs:'3g', fat:'0.1g', pranic:'High Pranic' },
+                'ber':{ name:'Ber (Jujube)', serving:'5 pieces (50g)', calories:36, protein:'0.5g', carbs:'8.5g', fat:'0.1g', pranic:'High Pranic' },
+                'banana':{ name:'Banana', serving:'1 medium (118g)', calories:105, protein:'1.3g', carbs:'27g', fat:'0.4g', pranic:'High Pranic' },
+                'apple':{ name:'Apple', serving:'1 medium (182g)', calories:95, protein:'0.5g', carbs:'25g', fat:'0.3g', pranic:'High Pranic' },
+                'orange':{ name:'Orange', serving:'1 medium (131g)', calories:62, protein:'1.2g', carbs:'15g', fat:'0.2g', pranic:'High Pranic' },
+                'watermelon':{ name:'Watermelon', serving:'1 cup (152g)', calories:46, protein:'0.9g', carbs:'12g', fat:'0.2g', pranic:'High Pranic' },
+                'pineapple':{ name:'Pineapple', serving:'1 cup (165g)', calories:82, protein:'0.9g', carbs:'22g', fat:'0.2g', pranic:'High Pranic' },
+                'grapes':{ name:'Grapes', serving:'1 cup (151g)', calories:104, protein:'1.1g', carbs:'27g', fat:'0.2g', pranic:'High Pranic' },
+                'strawberry':{ name:'Strawberries', serving:'1 cup (152g)', calories:49, protein:'1g', carbs:'12g', fat:'0.5g', pranic:'High Pranic' },
+                'strawberries':{ name:'Strawberries', serving:'1 cup (152g)', calories:49, protein:'1g', carbs:'12g', fat:'0.5g', pranic:'High Pranic' },
+                'kiwi':{ name:'Kiwi', serving:'1 medium (69g)', calories:42, protein:'0.8g', carbs:'10g', fat:'0.4g', pranic:'High Pranic' },
+                'pear':{ name:'Pear', serving:'1 medium (178g)', calories:101, protein:'0.6g', carbs:'27g', fat:'0.2g', pranic:'High Pranic' },
+                'blueberries':{ name:'Blueberries', serving:'1 cup (148g)', calories:84, protein:'1.1g', carbs:'21g', fat:'0.5g', pranic:'High Pranic' },
 
                 // ── INDIAN VEGETABLES ──
-                'karela':{ name:'Karela (Bitter Gourd)', serving:'1 cup (94g)', calories:16, protein:'0.9g', carbs:'3.4g', fat:'0.2g' },
-                'tinda':{ name:'Tinda (Round Gourd)', serving:'1 cup (100g)', calories:21, protein:'0.5g', carbs:'4.6g', fat:'0.2g' },
-                'lauki':{ name:'Lauki (Bottle Gourd)', serving:'1 cup (116g)', calories:19, protein:'0.9g', carbs:'4.4g', fat:'0.1g' },
-                'turai':{ name:'Turai (Ridge Gourd)', serving:'1 cup (115g)', calories:17, protein:'1.2g', carbs:'3.5g', fat:'0.1g' },
-                'parwal':{ name:'Parwal (Pointed Gourd)', serving:'1 cup (100g)', calories:24, protein:'2g', carbs:'4.2g', fat:'0.3g' },
-                'arbi':{ name:'Arbi (Colocasia)', serving:'1 cup cooked (132g)', calories:187, protein:'0.5g', carbs:'45g', fat:'0.2g' },
-                'suran':{ name:'Suran (Yam)', serving:'1 cup (136g)', calories:177, protein:'2g', carbs:'42g', fat:'0.2g' },
-                'raw banana':{ name:'Raw Banana (Plantain)', serving:'1 medium (118g)', calories:110, protein:'1.2g', carbs:'28g', fat:'0.4g' },
-                'jackfruit':{ name:'Kathal (Jackfruit)', serving:'1 cup (165g)', calories:155, protein:'2.8g', carbs:'40g', fat:'0.6g' },
-                'drumstick':{ name:'Drumstick (Moringa)', serving:'1 cup (93g)', calories:37, protein:'2.5g', carbs:'8.5g', fat:'0.2g' },
-                'lotus stem':{ name:'Lotus Stem (Kamal Kakdi)', serving:'1 cup (89g)', calories:74, protein:'2g', carbs:'17g', fat:'0.1g' },
-                'brinjal':{ name:'Brinjal (Baingan)', serving:'1 cup (82g)', calories:20, protein:'0.8g', carbs:'4.8g', fat:'0.2g' },
-                'bhindi':{ name:'Bhindi (Okra)', serving:'1 cup (100g)', calories:33, protein:'2g', carbs:'7g', fat:'0.2g' },
-                'palak':{ name:'Palak (Spinach)', serving:'1 cup (30g)', calories:7, protein:'0.9g', carbs:'1.1g', fat:'0.1g' },
-                'methi':{ name:'Methi (Fenugreek Leaves)', serving:'1 cup (149g)', calories:36, protein:'3.5g', carbs:'6.5g', fat:'0.7g' },
-                'sarso saag':{ name:'Sarso Saag (Mustard Greens)', serving:'1 cup (150g)', calories:58, protein:'3g', carbs:'8g', fat:'2g' },
+                'karela':{ name:'Karela (Bitter Gourd)', serving:'1 cup (94g)', calories:16, protein:'0.9g', carbs:'3.4g', fat:'0.2g', pranic:'High Pranic' },
+                'tinda':{ name:'Tinda (Round Gourd)', serving:'1 cup (100g)', calories:21, protein:'0.5g', carbs:'4.6g', fat:'0.2g', pranic:'High Pranic' },
+                'lauki':{ name:'Lauki (Bottle Gourd)', serving:'1 cup (116g)', calories:19, protein:'0.9g', carbs:'4.4g', fat:'0.1g', pranic:'High Pranic' },
+                'turai':{ name:'Turai (Ridge Gourd)', serving:'1 cup (115g)', calories:17, protein:'1.2g', carbs:'3.5g', fat:'0.1g', pranic:'High Pranic' },
+                'parwal':{ name:'Parwal (Pointed Gourd)', serving:'1 cup (100g)', calories:24, protein:'2g', carbs:'4.2g', fat:'0.3g', pranic:'High Pranic' },
+                'arbi':{ name:'Arbi (Colocasia)', serving:'1 cup cooked (132g)', calories:187, protein:'0.5g', carbs:'45g', fat:'0.2g', pranic:'High Pranic' },
+                'suran':{ name:'Suran (Yam)', serving:'1 cup (136g)', calories:177, protein:'2g', carbs:'42g', fat:'0.2g', pranic:'High Pranic' },
+                'raw banana':{ name:'Raw Banana (Plantain)', serving:'1 medium (118g)', calories:110, protein:'1.2g', carbs:'28g', fat:'0.4g', pranic:'High Pranic' },
+                'jackfruit':{ name:'Kathal (Jackfruit)', serving:'1 cup (165g)', calories:155, protein:'2.8g', carbs:'40g', fat:'0.6g', pranic:'High Pranic' },
+                'drumstick':{ name:'Drumstick (Moringa)', serving:'1 cup (93g)', calories:37, protein:'2.5g', carbs:'8.5g', fat:'0.2g', pranic:'High Pranic' },
+                'lotus stem':{ name:'Lotus Stem (Kamal Kakdi)', serving:'1 cup (89g)', calories:74, protein:'2g', carbs:'17g', fat:'0.1g', pranic:'High Pranic' },
+                'brinjal':{ name:'Brinjal (Baingan)', serving:'1 cup (82g)', calories:20, protein:'0.8g', carbs:'4.8g', fat:'0.2g', pranic:'High Pranic' },
+                'bhindi':{ name:'Bhindi (Okra)', serving:'1 cup (100g)', calories:33, protein:'2g', carbs:'7g', fat:'0.2g', pranic:'High Pranic' },
+                'palak':{ name:'Palak (Spinach)', serving:'1 cup (30g)', calories:7, protein:'0.9g', carbs:'1.1g', fat:'0.1g', pranic:'High Pranic' },
+                'methi':{ name:'Methi (Fenugreek Leaves)', serving:'1 cup (149g)', calories:36, protein:'3.5g', carbs:'6.5g', fat:'0.7g', pranic:'High Pranic' },
+                'sarso saag':{ name:'Sarso Saag (Mustard Greens)', serving:'1 cup (150g)', calories:58, protein:'3g', carbs:'8g', fat:'2g', pranic:'High Pranic' },
 
                 // ── PROTEINS ──
-                'chicken breast':{ name:'Chicken Breast', serving:'100g', calories:165, protein:'31g', carbs:'0g', fat:'3.6g' },
-                'chicken':{ name:'Chicken Breast', serving:'100g', calories:165, protein:'31g', carbs:'0g', fat:'3.6g' },
-                'chicken thigh':{ name:'Chicken Thigh', serving:'100g', calories:209, protein:'26g', carbs:'0g', fat:'11g' },
-                'tandoori chicken':{ name:'Tandoori Chicken', serving:'2 pieces (200g)', calories:310, protein:'42g', carbs:'6g', fat:'13g' },
-                'seekh kebab':{ name:'Seekh Kebab', serving:'2 pieces (100g)', calories:215, protein:'22g', carbs:'5g', fat:'12g' },
-                'mutton':{ name:'Mutton (Goat)', serving:'100g', calories:294, protein:'25g', carbs:'0g', fat:'21g' },
-                'fish':{ name:'Fish (avg)', serving:'100g', calories:185, protein:'24g', carbs:'0g', fat:'9g' },
-                'rohu fish':{ name:'Rohu Fish', serving:'100g', calories:97, protein:'16.6g', carbs:'0g', fat:'2.7g' },
-                'pomfret':{ name:'Pomfret', serving:'100g', calories:96, protein:'18g', carbs:'0g', fat:'2.5g' },
-                'surmai':{ name:'Surmai (King Fish)', serving:'100g', calories:122, protein:'23g', carbs:'0g', fat:'3g' },
-                'tuna':{ name:'Tuna', serving:'100g', calories:132, protein:'28g', carbs:'0g', fat:'1.3g' },
-                'salmon':{ name:'Salmon', serving:'100g', calories:208, protein:'20g', carbs:'0g', fat:'13g' },
-                'prawn':{ name:'Prawn/Shrimp', serving:'100g', calories:99, protein:'24g', carbs:'0.2g', fat:'0.3g' },
-                'egg':{ name:'Egg', serving:'1 large (50g)', calories:72, protein:'6g', carbs:'0.4g', fat:'5g' },
-                'eggs':{ name:'Egg', serving:'1 large (50g)', calories:72, protein:'6g', carbs:'0.4g', fat:'5g' },
-                'egg white':{ name:'Egg White', serving:'1 large', calories:17, protein:'3.6g', carbs:'0.2g', fat:'0.1g' },
-                'boiled egg':{ name:'Boiled Egg', serving:'1 large (50g)', calories:78, protein:'6g', carbs:'0.6g', fat:'5g' },
-                'omelette':{ name:'Plain Omelette (2 egg)', serving:'1 (100g)', calories:180, protein:'12g', carbs:'1g', fat:'14g' },
-                'tofu':{ name:'Tofu', serving:'100g', calories:76, protein:'8g', carbs:'1.9g', fat:'4.8g' },
-                'soya chunks':{ name:'Soya Chunks', serving:'1/2 cup dry (52g)', calories:207, protein:'52g', carbs:'3.9g', fat:'0.5g' },
-                'soya':{ name:'Soya Chunks', serving:'1/2 cup dry (52g)', calories:207, protein:'52g', carbs:'3.9g', fat:'0.5g' },
-                'paneer tikka':{ name:'Paneer Tikka', serving:'6 pieces (150g)', calories:255, protein:'18g', carbs:'8g', fat:'17g' },
+                'chicken breast':{ name:'Chicken Breast', serving:'100g', calories:165, protein:'31g', carbs:'0g', fat:'3.6g', pranic:'Non-Pranic' },
+                'chicken':{ name:'Chicken Breast', serving:'100g', calories:165, protein:'31g', carbs:'0g', fat:'3.6g', pranic:'Non-Pranic' },
+                'chicken thigh':{ name:'Chicken Thigh', serving:'100g', calories:209, protein:'26g', carbs:'0g', fat:'11g', pranic:'Non-Pranic' },
+                'tandoori chicken':{ name:'Tandoori Chicken', serving:'2 pieces (200g)', calories:310, protein:'42g', carbs:'6g', fat:'13g', pranic:'Non-Pranic' },
+                'seekh kebab':{ name:'Seekh Kebab', serving:'2 pieces (100g)', calories:215, protein:'22g', carbs:'5g', fat:'12g', pranic:'Non-Pranic' },
+                'mutton':{ name:'Mutton (Goat)', serving:'100g', calories:294, protein:'25g', carbs:'0g', fat:'21g', pranic:'Non-Pranic' },
+                'fish':{ name:'Fish (avg)', serving:'100g', calories:185, protein:'24g', carbs:'0g', fat:'9g', pranic:'Non-Pranic' },
+                'rohu fish':{ name:'Rohu Fish', serving:'100g', calories:97, protein:'16.6g', carbs:'0g', fat:'2.7g', pranic:'Non-Pranic' },
+                'pomfret':{ name:'Pomfret', serving:'100g', calories:96, protein:'18g', carbs:'0g', fat:'2.5g', pranic:'Non-Pranic' },
+                'surmai':{ name:'Surmai (King Fish)', serving:'100g', calories:122, protein:'23g', carbs:'0g', fat:'3g', pranic:'Non-Pranic' },
+                'tuna':{ name:'Tuna', serving:'100g', calories:132, protein:'28g', carbs:'0g', fat:'1.3g', pranic:'Non-Pranic' },
+                'salmon':{ name:'Salmon', serving:'100g', calories:208, protein:'20g', carbs:'0g', fat:'13g', pranic:'Non-Pranic' },
+                'prawn':{ name:'Prawn/Shrimp', serving:'100g', calories:99, protein:'24g', carbs:'0.2g', fat:'0.3g', pranic:'Non-Pranic' },
+                'egg':{ name:'Egg', serving:'1 large (50g)', calories:72, protein:'6g', carbs:'0.4g', fat:'5g', pranic:'Non-Pranic' },
+                'eggs':{ name:'Egg', serving:'1 large (50g)', calories:72, protein:'6g', carbs:'0.4g', fat:'5g', pranic:'Non-Pranic' },
+                'egg white':{ name:'Egg White', serving:'1 large', calories:17, protein:'3.6g', carbs:'0.2g', fat:'0.1g', pranic:'Non-Pranic' },
+                'boiled egg':{ name:'Boiled Egg', serving:'1 large (50g)', calories:78, protein:'6g', carbs:'0.6g', fat:'5g', pranic:'Non-Pranic' },
+                'omelette':{ name:'Plain Omelette (2 egg)', serving:'1 (100g)', calories:180, protein:'12g', carbs:'1g', fat:'14g', pranic:'Non-Pranic' },
+                'tofu':{ name:'Tofu', serving:'100g', calories:76, protein:'8g', carbs:'1.9g', fat:'4.8g', pranic:'High Pranic' },
+                'soya chunks':{ name:'Soya Chunks', serving:'1/2 cup dry (52g)', calories:207, protein:'52g', carbs:'3.9g', fat:'0.5g', pranic:'High Pranic' },
+                'soya':{ name:'Soya Chunks', serving:'1/2 cup dry (52g)', calories:207, protein:'52g', carbs:'3.9g', fat:'0.5g', pranic:'High Pranic' },
+                'paneer tikka':{ name:'Paneer Tikka', serving:'6 pieces (150g)', calories:255, protein:'18g', carbs:'8g', fat:'17g', pranic:'High Pranic' },
 
                 // ── GRAINS & CARBS ──
-                'rice':{ name:'White Rice (cooked)', serving:'1 cup (158g)', calories:205, protein:'4.3g', carbs:'45g', fat:'0.4g' },
-                'white rice':{ name:'White Rice (cooked)', serving:'1 cup (158g)', calories:205, protein:'4.3g', carbs:'45g', fat:'0.4g' },
-                'brown rice':{ name:'Brown Rice (cooked)', serving:'1 cup (195g)', calories:216, protein:'5g', carbs:'45g', fat:'1.8g' },
-                'quinoa':{ name:'Quinoa (cooked)', serving:'1 cup (185g)', calories:222, protein:'8g', carbs:'39g', fat:'3.6g' },
-                'oats':{ name:'Oatmeal (cooked)', serving:'1 cup (234g)', calories:166, protein:'5.9g', carbs:'28g', fat:'3.6g' },
-                'oatmeal':{ name:'Oatmeal (cooked)', serving:'1 cup (234g)', calories:166, protein:'5.9g', carbs:'28g', fat:'3.6g' },
-                'daliya':{ name:'Daliya (Broken Wheat)', serving:'1 cup cooked (180g)', calories:198, protein:'7g', carbs:'40g', fat:'1.2g' },
-                'besan':{ name:'Besan (Chickpea Flour)', serving:'1/4 cup (30g)', calories:110, protein:'6g', carbs:'18g', fat:'2g' },
-                'maida':{ name:'Maida (All-Purpose Flour)', serving:'1/4 cup (30g)', calories:109, protein:'3g', carbs:'23g', fat:'0.3g' },
-                'atta':{ name:'Whole Wheat Atta', serving:'1/4 cup (30g)', calories:104, protein:'4g', carbs:'20g', fat:'0.7g' },
-                'pasta':{ name:'Pasta (cooked)', serving:'1 cup (140g)', calories:220, protein:'8g', carbs:'43g', fat:'1.3g' },
-                'bread':{ name:'Whole Wheat Bread', serving:'1 slice (28g)', calories:69, protein:'3.6g', carbs:'12g', fat:'1g' },
-                'white bread':{ name:'White Bread', serving:'1 slice (25g)', calories:67, protein:'2g', carbs:'13g', fat:'0.8g' },
+                'rice':{ name:'White Rice (cooked)', serving:'1 cup (158g)', calories:205, protein:'4.3g', carbs:'45g', fat:'0.4g', pranic:'High Pranic' },
+                'white rice':{ name:'White Rice (cooked)', serving:'1 cup (158g)', calories:205, protein:'4.3g', carbs:'45g', fat:'0.4g', pranic:'High Pranic' },
+                'brown rice':{ name:'Brown Rice (cooked)', serving:'1 cup (195g)', calories:216, protein:'5g', carbs:'45g', fat:'1.8g', pranic:'High Pranic' },
+                'quinoa':{ name:'Quinoa (cooked)', serving:'1 cup (185g)', calories:222, protein:'8g', carbs:'39g', fat:'3.6g', pranic:'High Pranic' },
+                'oats':{ name:'Oatmeal (cooked)', serving:'1 cup (234g)', calories:166, protein:'5.9g', carbs:'28g', fat:'3.6g', pranic:'High Pranic' },
+                'oatmeal':{ name:'Oatmeal (cooked)', serving:'1 cup (234g)', calories:166, protein:'5.9g', carbs:'28g', fat:'3.6g', pranic:'High Pranic' },
+                'daliya':{ name:'Daliya (Broken Wheat)', serving:'1 cup cooked (180g)', calories:198, protein:'7g', carbs:'40g', fat:'1.2g', pranic:'High Pranic' },
+                'besan':{ name:'Besan (Chickpea Flour)', serving:'1/4 cup (30g)', calories:110, protein:'6g', carbs:'18g', fat:'2g', pranic:'High Pranic' },
+                'maida':{ name:'Maida (All-Purpose Flour)', serving:'1/4 cup (30g)', calories:109, protein:'3g', carbs:'23g', fat:'0.3g', pranic:'Low Pranic' },
+                'atta':{ name:'Whole Wheat Atta', serving:'1/4 cup (30g)', calories:104, protein:'4g', carbs:'20g', fat:'0.7g', pranic:'High Pranic' },
+                'pasta':{ name:'Pasta (cooked)', serving:'1 cup (140g)', calories:220, protein:'8g', carbs:'43g', fat:'1.3g', pranic:'Low Pranic' },
+                'bread':{ name:'Whole Wheat Bread', serving:'1 slice (28g)', calories:69, protein:'3.6g', carbs:'12g', fat:'1g', pranic:'High Pranic' },
+                'white bread':{ name:'White Bread', serving:'1 slice (25g)', calories:67, protein:'2g', carbs:'13g', fat:'0.8g', pranic:'Low Pranic' },
 
                 // ── DAIRY ──
-                'milk':{ name:'Milk (2%)', serving:'1 cup (244g)', calories:122, protein:'8g', carbs:'12g', fat:'4.8g' },
-                'whole milk':{ name:'Whole Milk', serving:'1 cup (244g)', calories:149, protein:'8g', carbs:'12g', fat:'8g' },
-                'skim milk':{ name:'Skim Milk', serving:'1 cup (244g)', calories:83, protein:'8g', carbs:'12g', fat:'0.2g' },
-                'yogurt':{ name:'Greek Yogurt', serving:'1 cup (170g)', calories:100, protein:'17g', carbs:'6g', fat:'0.7g' },
-                'greek yogurt':{ name:'Greek Yogurt', serving:'1 cup (170g)', calories:100, protein:'17g', carbs:'6g', fat:'0.7g' },
-                'cheese':{ name:'Cheddar Cheese', serving:'1 oz (28g)', calories:114, protein:'7g', carbs:'0.4g', fat:'9g' },
-                'cottage cheese':{ name:'Cottage Cheese', serving:'1 cup (226g)', calories:163, protein:'28g', carbs:'6g', fat:'2.3g' },
-                'butter':{ name:'Butter', serving:'1 tbsp (14g)', calories:102, protein:'0.1g', carbs:'0g', fat:'12g' },
+                'milk':{ name:'Milk (2%)', serving:'1 cup (244g)', calories:122, protein:'8g', carbs:'12g', fat:'4.8g', pranic:'High Pranic' },
+                'whole milk':{ name:'Whole Milk', serving:'1 cup (244g)', calories:149, protein:'8g', carbs:'12g', fat:'8g', pranic:'High Pranic' },
+                'skim milk':{ name:'Skim Milk', serving:'1 cup (244g)', calories:83, protein:'8g', carbs:'12g', fat:'0.2g', pranic:'High Pranic' },
+                'yogurt':{ name:'Greek Yogurt', serving:'1 cup (170g)', calories:100, protein:'17g', carbs:'6g', fat:'0.7g', pranic:'High Pranic' },
+                'greek yogurt':{ name:'Greek Yogurt', serving:'1 cup (170g)', calories:100, protein:'17g', carbs:'6g', fat:'0.7g', pranic:'High Pranic' },
+                'cheese':{ name:'Cheddar Cheese', serving:'1 oz (28g)', calories:114, protein:'7g', carbs:'0.4g', fat:'9g', pranic:'High Pranic' },
+                'cottage cheese':{ name:'Cottage Cheese', serving:'1 cup (226g)', calories:163, protein:'28g', carbs:'6g', fat:'2.3g', pranic:'High Pranic' },
+                'butter':{ name:'Butter', serving:'1 tbsp (14g)', calories:102, protein:'0.1g', carbs:'0g', fat:'12g', pranic:'High Pranic' },
 
                 // ── NUTS & SEEDS ──
-                'almonds':{ name:'Almonds', serving:'1 oz (28g)', calories:164, protein:'6g', carbs:'6g', fat:'14g' },
-                'cashews':{ name:'Cashews', serving:'1 oz (28g)', calories:157, protein:'5g', carbs:'9g', fat:'12g' },
-                'walnuts':{ name:'Walnuts', serving:'1 oz (28g)', calories:185, protein:'4.3g', carbs:'3.9g', fat:'18g' },
-                'peanuts':{ name:'Peanuts', serving:'1 oz (28g)', calories:161, protein:'7g', carbs:'4.6g', fat:'14g' },
-                'peanut butter':{ name:'Peanut Butter', serving:'2 tbsp (32g)', calories:188, protein:'8g', carbs:'7g', fat:'16g' },
-                'pistachio':{ name:'Pistachio', serving:'1 oz (28g)', calories:159, protein:'6g', carbs:'8g', fat:'13g' },
-                'dates':{ name:'Dates', serving:'3 pieces (24g)', calories:66, protein:'0.4g', carbs:'18g', fat:'0.1g' },
-                'raisins':{ name:'Raisins/Kishmish', serving:'1/4 cup (36g)', calories:108, protein:'1g', carbs:'29g', fat:'0.2g' },
-                'chia seeds':{ name:'Chia Seeds', serving:'1 oz (28g)', calories:138, protein:'4.7g', carbs:'12g', fat:'8.7g' },
-                'flaxseed':{ name:'Flaxseed', serving:'1 tbsp (10g)', calories:55, protein:'1.9g', carbs:'3g', fat:'4.3g' },
-                'sunflower seeds':{ name:'Sunflower Seeds', serving:'1 oz (28g)', calories:165, protein:'5.5g', carbs:'6.8g', fat:'14g' },
+                'almonds':{ name:'Almonds', serving:'1 oz (28g)', calories:164, protein:'6g', carbs:'6g', fat:'14g', pranic:'High Pranic' },
+                'cashews':{ name:'Cashews', serving:'1 oz (28g)', calories:157, protein:'5g', carbs:'9g', fat:'12g', pranic:'High Pranic' },
+                'walnuts':{ name:'Walnuts', serving:'1 oz (28g)', calories:185, protein:'4.3g', carbs:'3.9g', fat:'18g', pranic:'High Pranic' },
+                'peanuts':{ name:'Peanuts', serving:'1 oz (28g)', calories:161, protein:'7g', carbs:'4.6g', fat:'14g', pranic:'High Pranic' },
+                'peanut butter':{ name:'Peanut Butter', serving:'2 tbsp (32g)', calories:188, protein:'8g', carbs:'7g', fat:'16g', pranic:'High Pranic' },
+                'pistachio':{ name:'Pistachio', serving:'1 oz (28g)', calories:159, protein:'6g', carbs:'8g', fat:'13g', pranic:'High Pranic' },
+                'dates':{ name:'Dates', serving:'3 pieces (24g)', calories:66, protein:'0.4g', carbs:'18g', fat:'0.1g', pranic:'High Pranic' },
+                'raisins':{ name:'Raisins/Kishmish', serving:'1/4 cup (36g)', calories:108, protein:'1g', carbs:'29g', fat:'0.2g', pranic:'High Pranic' },
+                'chia seeds':{ name:'Chia Seeds', serving:'1 oz (28g)', calories:138, protein:'4.7g', carbs:'12g', fat:'8.7g', pranic:'High Pranic' },
+                'flaxseed':{ name:'Flaxseed', serving:'1 tbsp (10g)', calories:55, protein:'1.9g', carbs:'3g', fat:'4.3g', pranic:'High Pranic' },
+                'sunflower seeds':{ name:'Sunflower Seeds', serving:'1 oz (28g)', calories:165, protein:'5.5g', carbs:'6.8g', fat:'14g', pranic:'High Pranic' },
 
                 // ── HEALTHY FATS ──
-                'avocado':{ name:'Avocado', serving:'1 medium (200g)', calories:322, protein:'4g', carbs:'17g', fat:'29g' },
-                'olive oil':{ name:'Olive Oil', serving:'1 tbsp (14g)', calories:119, protein:'0g', carbs:'0g', fat:'14g' },
-                'coconut oil':{ name:'Coconut Oil', serving:'1 tbsp (14g)', calories:121, protein:'0g', carbs:'0g', fat:'14g' },
+                'avocado':{ name:'Avocado', serving:'1 medium (200g)', calories:322, protein:'4g', carbs:'17g', fat:'29g', pranic:'High Pranic' },
+                'olive oil':{ name:'Olive Oil', serving:'1 tbsp (14g)', calories:119, protein:'0g', carbs:'0g', fat:'14g', pranic:'High Pranic' },
+                'coconut oil':{ name:'Coconut Oil', serving:'1 tbsp (14g)', calories:121, protein:'0g', carbs:'0g', fat:'14g', pranic:'High Pranic' },
 
                 // ── FAST FOOD & TREATS ──
-                'pizza':{ name:'Pizza (cheese)', serving:'1 slice (107g)', calories:272, protein:'12g', carbs:'34g', fat:'10g' },
-                'burger':{ name:'Hamburger', serving:'1 burger (110g)', calories:295, protein:'17g', carbs:'30g', fat:'12g' },
-                'chocolate':{ name:'Dark Chocolate', serving:'1 oz (28g)', calories:155, protein:'1.4g', carbs:'13g', fat:'11g' },
-                'ice cream':{ name:'Ice Cream', serving:'1/2 cup (66g)', calories:137, protein:'2.3g', carbs:'16g', fat:'7g' },
-                'chips':{ name:'Potato Chips', serving:'1 oz (28g)', calories:152, protein:'2g', carbs:'15g', fat:'10g' },
-                'popcorn':{ name:'Popcorn (air-popped)', serving:'1 cup (8g)', calories:31, protein:'1g', carbs:'6g', fat:'0.4g' },
-                'soda':{ name:'Soda', serving:'12 oz (355ml)', calories:140, protein:'0g', carbs:'39g', fat:'0g' },
+                'pizza':{ name:'Pizza (cheese)', serving:'1 slice (107g)', calories:272, protein:'12g', carbs:'34g', fat:'10g', pranic:'Low Pranic' },
+                'burger':{ name:'Hamburger', serving:'1 burger (110g)', calories:295, protein:'17g', carbs:'30g', fat:'12g', pranic:'Non-Pranic' },
+                'chocolate':{ name:'Dark Chocolate', serving:'1 oz (28g)', calories:155, protein:'1.4g', carbs:'13g', fat:'11g', pranic:'High Pranic' },
+                'ice cream':{ name:'Ice Cream', serving:'1/2 cup (66g)', calories:137, protein:'2.3g', carbs:'16g', fat:'7g', pranic:'High Pranic' },
+                'chips':{ name:'Potato Chips', serving:'1 oz (28g)', calories:152, protein:'2g', carbs:'15g', fat:'10g', pranic:'Low Pranic' },
+                'popcorn':{ name:'Popcorn (air-popped)', serving:'1 cup (8g)', calories:31, protein:'1g', carbs:'6g', fat:'0.4g', pranic:'High Pranic' },
+                'soda':{ name:'Soda', serving:'12 oz (355ml)', calories:140, protein:'0g', carbs:'39g', fat:'0g', pranic:'Non-Pranic' },
 
                 // ── VEGETABLES ──
-                'broccoli':{ name:'Broccoli', serving:'1 cup (91g)', calories:31, protein:'2.5g', carbs:'6g', fat:'0.3g' },
-                'spinach':{ name:'Spinach', serving:'1 cup raw (30g)', calories:7, protein:'0.9g', carbs:'1.1g', fat:'0.1g' },
-                'carrot':{ name:'Carrot', serving:'1 medium (61g)', calories:25, protein:'0.6g', carbs:'6g', fat:'0.1g' },
-                'tomato':{ name:'Tomato', serving:'1 medium (123g)', calories:22, protein:'1.1g', carbs:'4.8g', fat:'0.2g' },
-                'cucumber':{ name:'Cucumber', serving:'1 cup (119g)', calories:16, protein:'0.8g', carbs:'3.6g', fat:'0.1g' },
-                'potato':{ name:'Potato', serving:'1 medium (173g)', calories:164, protein:'4.3g', carbs:'37g', fat:'0.2g' },
-                'sweet potato':{ name:'Sweet Potato', serving:'1 medium (114g)', calories:103, protein:'2.3g', carbs:'24g', fat:'0.2g' },
-                'onion':{ name:'Onion', serving:'1 medium (110g)', calories:44, protein:'1.2g', carbs:'10g', fat:'0.1g' },
-                'garlic':{ name:'Garlic', serving:'3 cloves (9g)', calories:13, protein:'0.6g', carbs:'3g', fat:'0g' },
-                'ginger':{ name:'Ginger', serving:'1 tbsp (6g)', calories:5, protein:'0.1g', carbs:'1.1g', fat:'0g' },
-                'cauliflower':{ name:'Cauliflower', serving:'1 cup (107g)', calories:27, protein:'2g', carbs:'5g', fat:'0.3g' },
-                'mushroom':{ name:'Mushrooms', serving:'1 cup (70g)', calories:15, protein:'2.2g', carbs:'2.3g', fat:'0.2g' },
-                'green peas':{ name:'Green Peas (Matar)', serving:'1 cup (160g)', calories:134, protein:'8.6g', carbs:'25g', fat:'0.4g' },
-                'corn':{ name:'Sweet Corn', serving:'1 ear (90g)', calories:83, protein:'3.1g', carbs:'19g', fat:'1.2g' },
-                'lentils':{ name:'Lentils (cooked)', serving:'1 cup (198g)', calories:230, protein:'18g', carbs:'40g', fat:'0.8g' },
-                'chickpeas':{ name:'Chickpeas (cooked)', serving:'1 cup (164g)', calories:269, protein:'15g', carbs:'45g', fat:'4.3g' },
+                'broccoli':{ name:'Broccoli', serving:'1 cup (91g)', calories:31, protein:'2.5g', carbs:'6g', fat:'0.3g', pranic:'High Pranic' },
+                'spinach':{ name:'Spinach', serving:'1 cup raw (30g)', calories:7, protein:'0.9g', carbs:'1.1g', fat:'0.1g', pranic:'High Pranic' },
+                'carrot':{ name:'Carrot', serving:'1 medium (61g)', calories:25, protein:'0.6g', carbs:'6g', fat:'0.1g', pranic:'High Pranic' },
+                'tomato':{ name:'Tomato', serving:'1 medium (123g)', calories:22, protein:'1.1g', carbs:'4.8g', fat:'0.2g', pranic:'High Pranic' },
+                'cucumber':{ name:'Cucumber', serving:'1 cup (119g)', calories:16, protein:'0.8g', carbs:'3.6g', fat:'0.1g', pranic:'High Pranic' },
+                'potato':{ name:'Potato', serving:'1 medium (173g)', calories:164, protein:'4.3g', carbs:'37g', fat:'0.2g', pranic:'High Pranic' },
+                'sweet potato':{ name:'Sweet Potato', serving:'1 medium (114g)', calories:103, protein:'2.3g', carbs:'24g', fat:'0.2g', pranic:'High Pranic' },
+                'onion':{ name:'Onion', serving:'1 medium (110g)', calories:44, protein:'1.2g', carbs:'10g', fat:'0.1g', pranic:'Non-Pranic' },
+                'garlic':{ name:'Garlic', serving:'3 cloves (9g)', calories:13, protein:'0.6g', carbs:'3g', fat:'0g', pranic:'Non-Pranic' },
+                'ginger':{ name:'Ginger', serving:'1 tbsp (6g)', calories:5, protein:'0.1g', carbs:'1.1g', fat:'0g', pranic:'High Pranic' },
+                'cauliflower':{ name:'Cauliflower', serving:'1 cup (107g)', calories:27, protein:'2g', carbs:'5g', fat:'0.3g', pranic:'High Pranic' },
+                'mushroom':{ name:'Mushrooms', serving:'1 cup (70g)', calories:15, protein:'2.2g', carbs:'2.3g', fat:'0.2g', pranic:'Non-Pranic' },
+                'green peas':{ name:'Green Peas (Matar)', serving:'1 cup (160g)', calories:134, protein:'8.6g', carbs:'25g', fat:'0.4g', pranic:'High Pranic' },
+                'corn':{ name:'Sweet Corn', serving:'1 ear (90g)', calories:83, protein:'3.1g', carbs:'19g', fat:'1.2g', pranic:'High Pranic' },
+                'lentils':{ name:'Lentils (cooked)', serving:'1 cup (198g)', calories:230, protein:'18g', carbs:'40g', fat:'0.8g', pranic:'High Pranic' },
+                'chickpeas':{ name:'Chickpeas (cooked)', serving:'1 cup (164g)', calories:269, protein:'15g', carbs:'45g', fat:'4.3g', pranic:'High Pranic' },
             };
 
             const track = () => {
@@ -1431,6 +1504,7 @@
                     {result&&(
                         <div className="nutrition-result">
                             <h4 className="result-title">{result.name} — {result.serving}</h4>
+                            {result.pranic && <div style={{display:'inline-block',padding:'0.3rem 0.9rem',borderRadius:'20px',fontSize:'0.85rem',fontWeight:'700',marginBottom:'1rem',background:result.pranic==='High Pranic'?'rgba(16,185,129,0.15)':result.pranic==='Non-Pranic'?'rgba(239,68,68,0.15)':'rgba(245,158,11,0.15)',color:result.pranic==='High Pranic'?'#10b981':result.pranic==='Non-Pranic'?'#ef4444':'#f59e0b',border:`1px solid ${result.pranic==='High Pranic'?'#10b981':result.pranic==='Non-Pranic'?'#ef4444':'#f59e0b'}44`}}>{result.pranic==='High Pranic'?'🌿 High Pranic (Sattvic)':result.pranic==='Non-Pranic'?'🔴 Non-Pranic (Tamasic)':'⚠️ Low Pranic (Rajasic)'}</div>}
                             <div className="nutrition-grid">
                                 <div className="nutrition-item"><div className="nutrition-value">{result.calories}</div><div className="nutrition-label">Calories</div></div>
                                 <div className="nutrition-item"><div className="nutrition-value">{result.protein}</div><div className="nutrition-label">Protein</div></div>
@@ -1475,9 +1549,9 @@
             const [typing, setTyping] = useState(false);
             const ref = useRef(null);
 
-            const quickQs = ["Best Indian protein foods?", "Surya Namaskar benefits?", "How to lose belly fat?", "Healthy Indian breakfast?", "Yoga for beginners?", "Weight loss tips India?"];
+            const quickQs = ["Best Indian protein foods?", "What is pranic food?", "Sattvic diet guide?", "How to lose belly fat?", "Surya Namaskar benefits?", "Yoga for beginners?"];
 
-            useEffect(() => { ref.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, typing]);
+            useEffect(() => { if (ref.current) { ref.current.scrollTop = ref.current.scrollHeight; } }, [messages, typing]);
 
             const healthAnswers = {
                 // ── INDIAN DIET & FOODS ──
@@ -1499,6 +1573,10 @@
                 'vegetarian protein india': 'Complete guide to vegetarian protein in India!\n\n💪 High-protein foods:\n- Soya chunks: 52g protein per 100g dry (HIGHEST among vegetarian foods!)\n- Paneer: 18g per 100g\n- Moong/Masoor dal: 14-18g per cup cooked\n- Chickpeas/Rajma: 15g per cup\n- Greek yogurt: 17g per cup\n- Sattu (roasted chana flour): 20g per 100g\n- Quinoa: 8g per cup cooked\n\n🍽️ Daily protein goal: 0.8-1g per kg body weight\n✅ Strategy: Eat dal + roti/rice (complementary proteins), add dahi daily, snack on makhana/nuts, consider soya chunks in curries for huge protein boost.',
                 'sattu': 'Sattu (roasted Bengal gram/chana flour) is an underrated superfood! Per 100g: 413 calories, 20g protein, 65g carbs, 6g fat. Benefits: High protein (best plant protein per gram), excellent fiber for digestion, low glycemic index, cooling effect on body, economical and widely available. Uses: Sattu sherbet (cold drink), paratha stuffing, sattu ladoo. Popular in Bihar/UP/Bengal. Excellent for athletes, manual labourers, summer heat. Mix with water, lemon, and salt for a protein drink.',
                 'chai': 'Masala chai in moderation is actually healthy! Benefits: Black tea polyphenols (antioxidants), ginger and cardamom aid digestion, warming effect on body, small amounts of caffeine for alertness. Nutritional facts (without sugar): 65 calories, 3g protein. With sugar: 95 calories. Tips: Use less sugar or try jaggery, avoid 4+ cups daily (caffeine), don\'t drink on empty stomach, use less milk for fewer calories. Chai is part of Indian culture – enjoy 1-2 cups daily guilt-free!',
+                'pranic food': '🌿 Pranic Food Classification (Yogic/Ayurvedic system)\n\nPrana = life force energy. Foods are classified by how they affect your energy and consciousness.\n\n✅ HIGH PRANIC FOODS (Sattvic - promote clarity, vitality):\n🌿 Fresh fruits: mango, banana, apple, papaya, pomegranate\n🌿 Vegetables: spinach, carrot, cucumber, tomato, broccoli\n🌿 Whole grains: brown rice, whole wheat roti, oats, daliya\n🌿 Legumes: moong dal, chana, rajma (freshly cooked)\n🌿 Dairy: fresh milk, dahi, paneer, ghee, buttermilk\n🌿 Nuts & seeds: almonds, walnuts, flaxseed, chia seeds\n🌿 Natural sweeteners: honey, jaggery, dates\n🌿 Mild spices: turmeric, cumin, coriander, ginger, cinnamon\n🌿 Fresh coconut water, herbal teas\n\n⚠️ LOW PRANIC / RAJASIC FOODS (stimulating, agitating energy):\n⚠️ Excessive spices, chillies, very hot/pungent food\n⚠️ Coffee, strong tea, energy drinks\n⚠️ Sour foods in excess, pickles, vinegar\n⚠️ Packaged/processed but not harmful (chips, namkeen)\n⚠️ Deep-fried foods (pakora, vada, puri)\n⚠️ White refined flour (maida) products\n\n🔴 NON-PRANIC / TAMASIC FOODS (dull energy, heaviness):\n🔴 Meat, fish, poultry, eggs (in yogic classification)\n🔴 Onion and garlic (traditional yogic diet avoids these)\n🔴 Mushrooms (grown in darkness, tamasic)\n🔴 Alcohol and intoxicants\n🔴 Stale, reheated, or leftover food\n🔴 Overly processed/packaged foods\n🔴 Frozen foods, canned goods\n\n💡 Note: The pranic classification is from yogic tradition. For general nutrition, onion/garlic/eggs are healthy. Choose based on your goals – yoga practitioners typically prefer sattvic diet.',
+                'sattvic food': '✅ Sattvic (High Pranic) Diet Guide!\n\nSattvic diet is the yogic diet for clarity, peace, and high energy.\n\n🌿 Best Sattvic Indian meals:\n- Khichdi (rice + moong dal + mild spices)\n- Fresh fruit breakfast\n- Roti + palak paneer + cucumber raita\n- Sprouts salad with lemon\n- Poha with nuts and coconut\n- Steamed idli + coconut chutney\n- Sabudana khichdi\n- Daliya porridge with fruits\n- Warm milk with turmeric and honey\n\n🌿 Core principles:\n1. Freshly cooked (no reheated food)\n2. Mild spices (no excessive chilli)\n3. No onion, garlic (traditional rule)\n4. No meat/eggs\n5. Eat with gratitude and awareness\n6. Don\'t overeat (eat to 80% capacity)\n\n💫 Benefits practitioners report: Clearer mind, better focus during meditation, stable energy (no spikes), improved mood, lighter feeling after meals, deeper sleep.\n\nMany yogis, sadhus, and spiritual practitioners follow this diet. It is widely practiced across Indian ashrams.',
+                'tamasic food': '🔴 Tamasic (Non-Pranic) Foods to Avoid!\n\nIn yogic philosophy, tamasic foods create dullness, lethargy, and cloud the mind.\n\n🔴 Common tamasic foods:\n- Meat, fish, chicken, eggs\n- Onion and garlic\n- Mushrooms\n- Alcohol, tobacco\n- Stale or leftover food (even reheated)\n- Deep-fried foods\n- Refined flour (maida) products\n- Excessive sugar\n- Frozen and canned foods\n- Overripe or rotten food\n\n⚡ Effects yogic tradition attributes to tamasic food:\n- Mental dullness and heaviness\n- Decreased motivation\n- Disrupted sleep\n- Reduced awareness in meditation\n- Emotional instability\n\n💡 Modern nutrition note: Many tamasic foods (like eggs, fish, garlic, onion) are nutritionally excellent! The tamasic classification is from a spiritual/energetic perspective, not a health deficiency perspective. Athletes and non-practitioners benefit greatly from these foods. Yogis following strict sattvic diet for spiritual practice choose to avoid them for that reason.',
+                'non pranic': '🔴 Non-Pranic Foods in Indian Diet\n\nFrom the yogic/Ayurvedic perspective, these foods are considered non-pranic or tamasic:\n\n🥩 Animal Products (in yogic classification):\n- Chicken, mutton, beef, pork\n- Fish and seafood\n- Eggs (though lacto-vegetarian diets may include dairy)\n\n🧅 Pungent Vegetables:\n- Onion and garlic (surprisingly, avoided in strict yogic diet)\n- Leeks and shallots\n\n🍄 Fungi: Mushrooms (grown without sunlight)\n\n🏭 Processed & Stale:\n- Deep-fried snacks (pakora, samosa, chips)\n- Reheated or day-old food\n- Packaged/canned foods\n- Refined flour (maida) products\n- Excessive pickles, vinegar\n\n🥃 Intoxicants: Alcohol, tobacco\n\n💡 Remember: This is yogic classification. From a pure nutrition standpoint, garlic, onion, eggs are among the HEALTHIEST foods. The classification is about vibrational energy, not vitamins!',
                 'jaggery vs sugar': 'Jaggery (gur) vs Sugar – The real truth! Similarities: Both are 99%+ sugar, similar calorie content (~4 cal/g), both raise blood sugar similarly. Jaggery advantages: Contains small amounts of iron, potassium, magnesium, antioxidants, less refined, molasses retained. The verdict: Jaggery is marginally better than white sugar, but neither should be consumed in large amounts. If choosing a sweetener: Jaggery > refined sugar, but dates/honey/coconut sugar are better options. A diabetic shouldn\'t freely eat jaggery thinking it\'s healthy!',
                 'curd rice': 'Curd rice (thayir sadam) is one of the healthiest complete meals! Per cup: 268 calories, 7g protein, 45g carbs, 6g fat. Benefits: Probiotics from curd (gut health, immunity), carbs from rice (energy), tempering spices (digestive benefits), cooling on the body. Great for: Digestive recovery, hot summer days, soothing upset stomach, post-illness recovery. Add: Pomegranate, grated carrot, cucumber for extra nutrition. This South Indian staple is Ayurvedically perfect – cooling, soothing, and nourishing!',
                 'rajma':  'Rajma (kidney beans) is one of India\'s best protein and fiber foods! Per cup cooked: 225 calories, 15g protein, 40g carbs, 0.9g fat. Benefits: High fiber reduces cholesterol and blood sugar, excellent plant protein, iron and folate for blood health, antioxidant-rich (anthocyanins in red color), prebiotic fiber feeds gut bacteria. Rajma chawal is actually a nutritionally complete meal! Tips: Soak overnight, pressure cook, pair with brown rice, add lemon for iron absorption, don\'t overcook (destroys nutrients).',
@@ -1586,10 +1664,9 @@
                         {quickQs.map((q, i) => <button key={i} className="quick-btn" onClick={() => send(q)}>{q}</button>)}
                     </div>
                     <div className="chat-container">
-                        <div className="chat-messages">
+                        <div className="chat-messages" ref={ref}>
                             {messages.map((m, i) => <div key={i} className={`chat-message ${m.type}`} style={{whiteSpace:'pre-line'}}>{m.text}</div>)}
                             {typing && <div className="typing"><span></span><span></span><span></span></div>}
-                            <div ref={ref} />
                         </div>
                         <div className="input-wrapper">
                             <input type="text" className="text-input" placeholder="Ask a health question…" value={input} onChange={e=>setInput(e.target.value)} onKeyPress={e=>e.key==='Enter'&&send()} />
